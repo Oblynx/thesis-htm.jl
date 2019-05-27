@@ -1,0 +1,28 @@
+% https://www.overleaf.com/learn/latex/How_to_Write_a_Thesis_in_LaTeX_(Part_1):_Basic_Structure
+\documentclass[a4paper,12pt,twoside]{report}
+
+\input{preamble.tex}
+
+\renewcommand{\bibname}{Βιβλιογραφία}
+\renewcommand{\chaptername}{Κεφάλαιο}
+
+\title{
+{Εκφραστική υλοποίηση των αλγορίθμων HTM ως βάση για περαιτέρω ανάλυση}\\
+{\large Αριστοτέλειο Πανεπιστήμιο Θεσσαλονίκης}\\
+{Σχολή Ηλεκτρολόγων Μηχανικών και Μηχανικών Υπολογιστών}
+}
+
+\author{Κωνσταντίνος Σαμαράς-Τσακίρης}
+\date{2019-06-05}
+
+\begin{document}
+
+\input{chapters/abstract.tex}
+
+\tableofcontents{}
+
+\chapter{Εισαγωγή}
+\input{chapters/introduction.tex}
+
+\appendix
+\end{document}
