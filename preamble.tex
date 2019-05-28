@@ -13,8 +13,6 @@
 \usepackage[section]{placeins}	% Don't let floats float before sections
 \usepackage{listings}
 \usepackage{amsmath}  % align equations
-\usepackage{biblatex}
-
 \usepackage{fancyhdr} % headers-footers
 \usepackage{mathtools}
 % Tables
@@ -23,25 +21,21 @@
 % for having numbers aligned to the decimal point
 \usepackage{siunitx}
 
+\usepackage{polyglossia}
+\setdefaultlanguage{greek}
+\usepackage{alphabeta}  % greek letters in maths mode
+\usepackage{csquotes}
+\usepackage[
+backend=biber,
+style=ieee,
+sorting=ynt
+]{biblatex}
+
 
 %-------------------------------------Custom commands----------------------------------------------------------
   \usepackage{amsfonts}
   \def \IN{\mathbb N} \def \IZ{\mathbb Z} \def \IQ{\mathbb Q} \def \IR{\mathbb R} \def \IC{\mathbb C}
   \def \NN{\mathbb N} \def \ZZ{\mathbb Z} \def \QQ{\mathbb Q} \def \RR{\mathbb R} \def \CC{\mathbb C}
-%-------------------------------GREEK LETTERS DEFINITION-------------------------------------------------------
-  \newcommand{\gra}{{\alpha}} \newcommand{\grb}{{\beta}} \newcommand{\grg}{{\gamma}} \newcommand{\grd}{{\delta}}
-  \newcommand{\gre}{{\epsilon}} \newcommand{\grz}{{\zeta}} \newcommand{\grh}{{\eta}} \newcommand{\gru}{{\theta}}
-  \newcommand{\gri}{{\iota}} \newcommand{\grk}{{\kappa}} \newcommand{\grl}{{\lambda}} \newcommand{\grm}{{\mu}}
-  \newcommand{\grn}{{\nu}} \newcommand{\grj}{{\xi}} \newcommand{\gro}{{\rm o}} \newcommand{\grp}{{\pi}}
-  \newcommand{\grr}{{\rho}} \newcommand{\grs}{{\sigma}} \newcommand{\grt}{{\tau}} \newcommand{\gry}{{\upsilon}}
-  \newcommand{\grf}{{\phi}} \newcommand{\grx}{{\chi}} \newcommand{\grc}{{\psi}} \newcommand{\grv}{{\omega}}
-  \newcommand{\grA}{{\rm A}} \newcommand{\grB}{{\rm B}} \newcommand{\grG}{{\Gamma}} \newcommand{\grD}{{\Delta}}
-  \newcommand{\grE}{{\rm E}} \newcommand{\grZ}{{\rm Z}} \newcommand{\grH}{{\rm H}} \newcommand{\grU}{{\Theta}}
-  \newcommand{\grI}{{\rm I}} \newcommand{\grK}{{\rm K}} \newcommand{\grL}{{\Lambda}} \newcommand{\grM}{{\rm M}}
-  \newcommand{\grN}{{\rm N}} \newcommand{\grJ}{{\Xi}} \newcommand{\grO}{{\rm O}} \newcommand{\grP}{{\Pi}}
-  \newcommand{\grR}{{\rm R}} \newcommand{\grS}{{\Sigma}} \newcommand{\grT}{{\rm T}} \newcommand{\grY}{{\rm Y}}
-  \newcommand{\grF}{{\Phi}} \newcommand{\grX}{{\rm X}} \newcommand{\grC}{{\Psi}} \newcommand{\grV}{{\Omega}}
-%---------------------------------------------------------------------------------------------------------------
 
 \setromanfont[Mapping=tex-text]{Linux Libertine O}
 \setsansfont[Mapping=tex-text]{DejaVu Sans}
@@ -49,9 +43,6 @@
 
 %\geometry{margin=2.5cm}
 \pagestyle{fancy}
-
-\graphicspath{ {figures/} }
-\addbibresource{references.bib}
 
 % Alignment and placing of subtables
 %   https://tex.stackexchange.com/questions/294589/alignment-and-placing-of-subtables

@@ -2,9 +2,10 @@
 \documentclass[a4paper,12pt,twoside]{report}
 
 \input{preamble.tex}
-
 \renewcommand{\bibname}{Βιβλιογραφία}
 \renewcommand{\chaptername}{Κεφάλαιο}
+\graphicspath{ {figures/} }
+\addbibresource{references.bib}
 
 \title{
 {Εκφραστική υλοποίηση των αλγορίθμων HTM ως βάση για περαιτέρω ανάλυση}\\
@@ -17,12 +18,13 @@
 
 \begin{document}
 
-\input{chapters/abstract.tex}
+%\input{chapters/abstract.tex}
 
 \tableofcontents{}
 
 \chapter{Εισαγωγή}
 \input{chapters/introduction.tex}
 
+\printbibliography
 \appendix
 \end{document}
