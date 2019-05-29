@@ -1,5 +1,5 @@
 % https://www.overleaf.com/learn/latex/How_to_Write_a_Thesis_in_LaTeX_(Part_1):_Basic_Structure
-\documentclass[a4paper,12pt,twoside]{report}
+\documentclass[a4paper,11pt,twoside]{report}
 
 \input{preamble.tex}
 %\renewcommand{\bibname}{Βιβλιογραφία}
@@ -9,7 +9,7 @@
 
 % Sloppy fix for protruding lines. Need to enable hyphenation!
 % https://tex.stackexchange.com/questions/20585/fixing-an-overfull-box
-\emergencystretch=2.6em
+%\emergencystretch=2.2em
 
 \title{
 {Εκφραστική υλοποίηση των αλγορίθμων HTM ως βάση για περαιτέρω ανάλυση}\\
@@ -21,7 +21,6 @@
 \date{2019-06-05}
 
 
-
 \begin{document}
 
 \maketitle
@@ -31,6 +30,9 @@
 
 \chapter{Εισαγωγή}
 \input{chapters/introduction.tex}
+
+\chapter{Το μοντέλο HTM}
+\input{chapters/htm.tex}
 
 \printbibliography
 \appendix
