@@ -1,16 +1,19 @@
 \usepackage{xltxtra}	% XeLaTeX
+\usepackage{fontspec}
 \usepackage{float}
 \usepackage{graphicx}
 \usepackage{wrapfig}	% Wrap text around figs
-\usepackage{lscape}
+%\usepackage{lscape}
 \usepackage{rotating}	% Sideways figure
 \usepackage{hyperref}	% Hyperlinks
 \usepackage{caption}	% Hyperlinks to float top
 \usepackage{subcaption}
-\usepackage{units}		% dB unit
+%\usepackage{units}		% dB unit
 \usepackage[a4paper,width=150mm,top=25mm,bottom=25mm]{geometry}	% margins
 \usepackage{tikz}
 \usepackage[section]{placeins}	% Don't let floats float before sections
+
+\usepackage{jlcode}
 \usepackage{listings}
 \usepackage{amsmath}  % align equations
 \usepackage{fancyhdr} % headers-footers
@@ -21,8 +24,11 @@
 % for having numbers aligned to the decimal point
 \usepackage{siunitx}
 
+\usepackage{microtype}
 \usepackage{polyglossia}
 \setdefaultlanguage{greek}
+\setotherlanguage{english}
+\enablehyphenation
 \usepackage{alphabeta}  % greek letters in maths mode
 \usepackage{csquotes}
 \usepackage[
@@ -31,7 +37,7 @@ style=ieee,
 sorting=ynt
 ]{biblatex}
 
-\renewcommand{\mkbegdispquote}[2]{\itshape}
+%\renewcommand{\mkbegdispquote}[2]{\itshape}
 
 %-------------------------------------Custom commands----------------------------------------------------------
   \usepackage{amsfonts}
