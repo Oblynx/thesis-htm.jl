@@ -5,6 +5,7 @@
 \usepackage{wrapfig}	% Wrap text around figs
 %\usepackage{lscape}
 \usepackage{rotating}	% Sideways figure
+\usepackage{amsmath}  % align equations
 \usepackage{hyperref}	% Hyperlinks
 \usepackage{caption}	% Hyperlinks to float top
 \usepackage{subcaption}
@@ -15,7 +16,6 @@
 
 \usepackage{jlcode}
 \usepackage{listings}
-\usepackage{amsmath}  % align equations
 \usepackage{fancyhdr} % headers-footers
 \usepackage{mathtools}
 % Tables
@@ -77,3 +77,7 @@ sorting=ynt
     bottom color=yellow!50!white!50!,
     font=\ttfamily
 }}
+
+\usepackage{letltxmacro}	% Safely renew commands (normal \let \renew might cause infinite loops if used on robust commands -- see https://tex.stackexchange.com/questions/47351/can-i-redefine-a-command-to-contain-itself)
+\LetLtxMacro{\oldemph}{\emph}
+\renewcommand{\emph}[1]{\textcolor{blue}{\oldemph{#1}}}
