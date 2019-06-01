@@ -22,8 +22,6 @@
 % Tables
 \usepackage{array}
 \usepackage{booktabs}
-% for having numbers aligned to the decimal point
-\usepackage{siunitx}
 
 \usepackage{microtype}
 \usepackage{polyglossia}
@@ -47,6 +45,7 @@ sorting=ynt
   \usepackage{amsfonts}
   \def \IN{\mathbb N} \def \IZ{\mathbb Z} \def \IQ{\mathbb Q} \def \IR{\mathbb R} \def \IC{\mathbb C}
   \def \NN{\mathbb N} \def \ZZ{\mathbb Z} \def \QQ{\mathbb Q} \def \RR{\mathbb R} \def \CC{\mathbb C}
+  \newcommand{\norm}[1]{\left\lVert#1\right\rVert}
 
 %\setromanfont[Mapping=tex-text]{Linux Libertine O}
 %\setsansfont[Mapping=tex-text]{DejaVu Sans}
@@ -60,7 +59,7 @@ sorting=ynt
 
 % Alignment and placing of subtables
 %   https://tex.stackexchange.com/questions/294589/alignment-and-placing-of-subtables
-\usepackage{booktabs,subcaption,amsfonts,dcolumn}
+\usepackage{booktabs,subcaption,dcolumn}
 \newcolumntype{d}[1]{D..{#1}}
 \newcommand\mc[1]{\multicolumn{1}{c}{#1}} % handy shortcut macro
 
@@ -84,3 +83,11 @@ sorting=ynt
 \usepackage{letltxmacro}	% Safely renew commands (normal \let \renew might cause infinite loops if used on robust commands -- see https://tex.stackexchange.com/questions/47351/can-i-redefine-a-command-to-contain-itself)
 \LetLtxMacro{\oldemph}{\emph}
 \renewcommand{\emph}[1]{\textcolor{blue}{\oldemph{#1}}}
+
+\usepackage{unicode-math}
+\setmathfont{Latin Modern Math}
+
+% for having numbers aligned to the decimal point
+% also engineering notation
+\usepackage{siunitx}
+\sisetup{output-exponent-marker=\ensuremath{\mathrm{e}}}
