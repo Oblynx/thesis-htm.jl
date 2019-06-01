@@ -7,6 +7,7 @@
 %\usepackage{lscape}
 \usepackage{rotating}	% Sideways figure
 \usepackage{amsmath}  % align equations
+\usepackage{centernot}
 \usepackage{hyperref}	% Hyperlinks
 \usepackage[font=footnotesize]{caption}	% Hyperlinks to float top
 \usepackage{subcaption}
@@ -46,6 +47,10 @@ sorting=ynt
   \def \IN{\mathbb N} \def \IZ{\mathbb Z} \def \IQ{\mathbb Q} \def \IR{\mathbb R} \def \IC{\mathbb C}
   \def \NN{\mathbb N} \def \ZZ{\mathbb Z} \def \QQ{\mathbb Q} \def \RR{\mathbb R} \def \CC{\mathbb C}
   \newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+  \newcommand{\notimplies}{%
+    \mathrel{{\ooalign{\hidewidth$\not\phantom{=}$\hidewidth\cr$\implies$}}}}
+  \newcommand{\Simplies}[1][]{\DOTSB\;\Longrightarrow^{#1}\;}
+  \newcommand{\simplies}[1][]{\DOTSB\;\Longrightarrow_{#1}\;}
 
 %\setromanfont[Mapping=tex-text]{Linux Libertine O}
 %\setsansfont[Mapping=tex-text]{DejaVu Sans}
@@ -66,6 +71,7 @@ sorting=ynt
 \renewcommand{\figurename}{Σχήμα}
 \renewcommand{\tablename}{Πίνακας}
 \renewcommand{\contentsname}{Περιεχόμενα}
+\renewcommand{\appendixname}{Παραρτήματα}
 
 \usetikzlibrary{arrows.meta,automata,decorations.pathmorphing,decorations.markings,
   backgrounds,positioning,fit,shapes.misc,
@@ -91,3 +97,5 @@ sorting=ynt
 % also engineering notation
 \usepackage{siunitx}
 \sisetup{output-exponent-marker=\ensuremath{\mathrm{e}}}
+
+\usepackage[titletoc]{appendix}
