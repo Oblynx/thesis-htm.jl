@@ -11,9 +11,9 @@
 \usepackage{hyperref}	% Hyperlinks
 \usepackage[font=footnotesize]{caption}	% Hyperlinks to float top
 \usepackage{subcaption}
+\usepackage{cleveref}
 %\usepackage{units}		% dB unit
 \usepackage[a4paper,width=150mm,top=25mm,bottom=25mm]{geometry}	% margins
-\usepackage{tikz}
 \usepackage[section]{placeins}	% Don't let floats float before sections
 
 \usepackage{jlcode}
@@ -73,6 +73,10 @@ sorting=ynt
 \renewcommand{\contentsname}{Περιεχόμενα}
 \renewcommand{\appendixname}{Παραρτήματα}
 
+
+\usepackage{tikz}
+\newcommand*\circled[1]{\tikz[baseline=(char.base)]{
+    \node[shape=circle,draw,inner sep=2pt] (char) {#1};}}
 \usetikzlibrary{arrows.meta,automata,decorations.pathmorphing,decorations.markings,
   backgrounds,positioning,fit,shapes.misc,
   graphs,arrows
@@ -99,3 +103,6 @@ sorting=ynt
 \sisetup{output-exponent-marker=\ensuremath{\mathrm{e}}}
 
 \usepackage[titletoc]{appendix}
+
+%\captionsetup[subfigure]{subrefformat=simple,labelformat=simple}
+%\renewcommand\thesubfigure{(\alph{subfigure})}
