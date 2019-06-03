@@ -1,0 +1,2 @@
+#!/bin/bash
+julia design_walkthrough/build_walkthrough.jl
