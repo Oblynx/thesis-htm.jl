@@ -17,7 +17,7 @@ dir= "design_walkthrough"
 out_dir= joinpath(dir,"build/")
 jmd_files= @>> readdir(dir) map(f->joinpath(dir,f)) map(abspath) filter(s->match(r".*jmd",s)|>!isnothing)
 
-weave.(jmd_files, out_path= out_dir, doctype= "md2tex", latex_cmd="lualatex")
+weave.(jmd_files, out_path= out_dir, doctype= "md2tex")
 
 out_files= @>> jmd_files map(basename) map(f->splitext(f)[1]) map(s->s*".tex") map(f->joinpath(out_dir,f)) map(abspath)
 
@@ -32,4 +32,5 @@ for file in out_files
   `mv "$out_dir/xx01" "$out_dir/$filename_body"`|> run
   `sed -i -E '/usepackage.*(geometry|lmodern|fontenc)/d' "$out_dir/$filename_preamble"`|> run
   `sed -i -E '/\\documentclass/d' "$out_dir/$filename_preamble"`|> run
+  `perl -pi -e 's|\$@(.+?)@\$|\1|g' "$out_dir/$filename_body"`|> run 
 end
