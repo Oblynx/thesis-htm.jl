@@ -16,5 +16,7 @@ This process is written in [build_walkthrough.jl](design_walkthrough/build_walkt
 
 ## Building the thesis
 
+1. Get the [everton mono](https://www.evertype.com/emono/) fonts, which are the only monospaced fonts I found to include all the Unicode characters I'm using!
+1. Locally implement the fixes in upstream Weave.jl documented [here](https://github.com/mpastell/Weave.jl/issues/213) and [here](https://github.com/mpastell/Weave.jl/issues/214), until they've been merged
 1. Build the design walkthroughs: `$ design_walkthrough/build_walkthrough`
 1. Build the [main .tex](kosamara-thesis-main.tex) with **LuaLaTeX**
