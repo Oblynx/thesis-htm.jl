@@ -31,6 +31,7 @@ for file in out_files
   `mv "$out_dir/xx00" "$out_dir/$filename_preamble"`|> run
   `mv "$out_dir/xx01" "$out_dir/$filename_body"`|> run
   `sed -i -E '/usepackage.*(geometry|lmodern|fontenc)/d' "$out_dir/$filename_preamble"`|> run
+  `sed -i -E 's/(basicstyle.*)\\footnotesize/\1/' "$out_dir/$filename_preamble"`|> run
   `sed -i -E '/\\documentclass/d' "$out_dir/$filename_preamble"`|> run
   `perl -pi -e 's|\$@(.+?)@\$|\1|g' "$out_dir/$filename_body"`|> run 
 end
