@@ -239,8 +239,8 @@ Dₚ= fillin_permanences()
 
 Ας οπτικοποιήσουμε τις συνάψεις:
 ```julia; tangle= false
-#using Plots; gr()
-#heatmap(Dₚ)
+using Plots; gr()
+heatmap(Dₚ)
 ```
 
 
@@ -313,7 +313,8 @@ activate(o)= ((o .>= Z(o)) .& (o .> θ_stimulus_activate))|> vec
 Άρα η ενεργοποίηση ως προς την είσοδο `z`:
 ```julia; term= true
 reshape(z,szᵢₙ)
-a= z|> o|> activate
+a= z|> o|> activate;
+reshape(a,szₛₚ)
 ```
 
 ### Παρώθηση
@@ -358,19 +359,20 @@ Tboost= 200
 ```julia; term= true
 åₜ= rand(szₛₚ...);
 reshape(z,szᵢₙ)
-a
-a_boosted= z|> o|> activate
+reshape(a,szₛₚ)
+a_boosted= z|> o|> activate;
+reshape(a_boosted,szₛₚ)
 ```
 και να διαπιστώσουμε πώς γίνεται ως τώρα η ενημέρωση της κατάστασης.
 ```julia; term= true
-åₜ
+reshape(åₜ,szₛₚ)
 step!(:åₜ, åₜ,a_boosted);
-åₜ
-z|> o|> activate
+reshape(åₜ,szₛₚ)
+@> z o activate reshape(szₛₚ)
 ```
 
 Είναι σημαντικό να λογαριάζουμε τις μεταβλητές κατάστασης του συστήματος, που ως τώρα είναι 2,
-`Dₚ` και `åₜ`, γιατί καθεμία χρειάζεται εφαρμογή συνάρτηση μετάβασης σε κάθε χρονικά βήμα του χωρικού συγκεντρωτή.
+`Dₚ` και `åₜ`, γιατί καθεμία χρειάζεται εφαρμογή συνάρτησης μετάβασης σε κάθε χρονικά βήμα του χωρικού συγκεντρωτή.
 Στην επόμενη ενότητα θα ορίσουμε τη συνάρτηση μετάβασης των συνάψεων (εκμάθηση) και θα συγκεντρώσουμε όλες τις συναρτήσεις μετάβασης σε μία, `step!(::Val{:sp})`.
 
 
@@ -392,15 +394,20 @@ end
 ```
 
 Οι επιπλέον παράμετροι `p⁺, p⁻` εκφράζουν το πόσο αυξομειώνονται οι συνάψεις σε κάθε βήμα εκμάθησης.
-Οι τελεστές `⊕, ⊖` που εφαρμόζουν τη συναπτική τροποποίηση είναι κορεσμένη πρόσθεση και αφαίρεση αντιστοίχως.
 ```julia; results= "hidden"
 p⁺= 0.1; p⁻= 0.02
+p⁺= round(𝕊𝕢, p⁺*typemax(𝕊𝕢)); p⁻= round(𝕊𝕢, p⁻*typemax(𝕊𝕢))
+```
+
+Οι τελεστές `⊕, ⊖` που εφαρμόζουν τη συναπτική τροποποίηση είναι κορεσμένη πρόσθεση και αφαίρεση αντιστοίχως.
+```julia; results= "hidden"
 ⊕(a::T,b::T) where {T<:Unsigned}= a+b>a ? a+b : typemax(T)
 ⊖(a::T,b::T) where {T<:Unsigned}= a-b<a ? a-b : one(T)
 ⊕(a::T,b::T) where {T<:Signed}= a+b>a ? a+b : typemax(T)
 ⊖(a::T,b::T) where {T<:Signed}= a-b>0 ? a-b : one(T)
 ```
 
+### Βελτίωση
 
 Βέβαια η παραπάνω μέθοδος δεν είναι πολύ αποδοτική για δύο λόγους:
 - προσπελαύνει πολλές φορές έναν εν δυνάμει πολύ μεγάλο πίνακα
@@ -422,11 +429,18 @@ step!(::Val{:Dₚ}, Dₚ,z,a)= learn!(Dₚ,z,a)
 ```
 
 Ας δούμε πώς τροποποιούνται οι συνάψεις σε έναν κύκλο ενεργοποίησης του χωρικού συγκεντρωτή.
-```julia; term= true; tangle= galse
-a= @> z o activate reshape(szₛₚ)
-Dₚ
+```julia; term= true; tangle= false
+a= z|> o|> activate;
+reshape(a,szₛₚ)
+D_before= copy(Dₚ);
 step!(:Dₚ, Dₚ,z,a);
 step!(:åₜ, åₜ,a);
-a= @> z o activate reshape(szₛₚ)
-Dₚ
+a= z|> o|> activate;
+reshape(a,szₛₚ)
+```
+
+Στις ενεργές μικροστήλες εξόδου, κάποιες συνάψεις ενισχύονται και κάποιες εξασθενούν:
+```julia; tangle= false
+D_diff= Int.(Dₚ .> D_before) - Int.(Dₚ .< D_before);
+D_diff|> heatmap
 ```
