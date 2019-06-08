@@ -80,24 +80,24 @@ _Τέτοια τεχνάσματα επιτρέπουν στη Julia να δημ
 Ας εντοπίσουμε αρχικά ποιες μικροστήλες είναι σε έξαρση, με είσοδο την ενεργοποίηση `c` των μικροστηλών και τους προβλεπτικούς νευρώνες `Π`
 (από το προηγούμενο χρονικό βήμα):
 ```julia; results= "hidden"
-burst()= c .& .!@percolumn(any,Π, k)
+burst(c,Π)= c .& .!@percolumn(any,Π, k)
 ```
 
 Οι στήλες που έχουν προσδοκώμενο νευρώνα και η συνολική ενεργοποίηση:
 ```julia; results= "hidden"
-predicted()= @percolumn(&,Π,c, k)
-activate()= (predicted() .| burst()')|> vec
+predicted(c,Π)= @percolumn(&,Π,c, k)
+activate(c,Π)= (predicted(c,Π) .| burst(c,Π)')|> vec
 ```
 Με τον ίδιο τρόπο λειτουργεί το «broadcasting» και στην `activate`.
 
 Με αυτά τα εφόδια, ας πειραματιστούμε με την ενεργοποίηση της χρονικής μνήμης:
 ```julia; term= true; tangle= false
-k= 2
+const k= 2;
 c= [1,0,0,1].==1;
-Π= [0,0, 1,0, 1,1, 1,0].==1;
-burst()'
-predicted()
-reshape(activate(),k,:)
+Π_= [0,0, 1,0, 1,1, 1,0].==1;
+burst(c,Π_)'
+predicted(c,Π_)
+reshape(activate(c,Π_),k,:)
 ```
 
 Έστω για τα επόμενα πειράματα και τα μεγέθη:
@@ -280,12 +280,12 @@ end
 Συνδυάζοντας τους νικητές δενδρίτες εφόσον υπάρχουν με τους νέους δενδρίτες όπου απαιτούνται,
 αποκτάται ένας νικητής δενδρίτης για κάθε μικροστήλη σε έξαρση:
 ```julia; results= "hidden"
-function maxsegϵburstcol!(povp_Mₛ,θ_stimulus_learn)
-  burstingCols= findall(burst())
+function maxsegϵburstcol!(B, povp_Mₛ, θ_stimulus_learn)
+  burstingCols= findall(B)
   # Make the result vector before to specify the type -- otherwise it won't hold `nothing`
   maxsegs= Vector{Option{Int}}(undef,length(burstingCols))
-  map!(col->bestmatch(col,povp_Mₛ,θ_stimulus_learn), maxsegs, burstingCols)
-  growseg!(maxsegs,burstingCols)
+  map!(col->bestmatch(col, povp_Mₛ, θ_stimulus_learn), maxsegs, burstingCols)
+  growseg!(maxsegs, burstingCols)
   @> maxsegs bitarray(Nₛ())
 end
 
@@ -313,7 +313,7 @@ end
 αντίγραφο του παλαιού συν τα νέα στοιχεία:
 ```julia; term=true; tangle=false
 using Random;
-SC2= [SC; bitrand(Nc)]
+SC2= [SC; bitrand(Nc)']
 ```
 
 Με έξυπνους χαμηλού επιπέδου χειρισμούς όμως, που θα παρατεθούν στο επόμενο κεφάλαιο ως αναφορά,
@@ -342,12 +342,12 @@ countmap_empty(x)= isempty(x) ? x : countmap(x)
 
 ```julia; results= "hidden"
 const Option{T}= Union{T,Nothing}
-function growseg!(maxsegs::Vector{Option{Int}},burstingcolidx)
+function growseg!(maxsegs::Vector{Option{Int}}, burstingcolidx)
   neuronsToGrow= map(col-> leastusedcell(synapses,col), burstingcolidx[isnothing.(maxsegs)])
   columnsToGrow= cell2col(neuronsToGrow)
   Nₛ_before= Nₛ()
   Nseggrow= length(neuronsToGrow)
-  _grow_synapse_matrices!(synapses::DistalSynapses,columnsToGrow,cellsToGrow,Nseggrow)
+  _grow_synapse_matrices!(columnsToGrow,cellsToGrow,Nseggrow)
   # Replace in maxsegs, `nothing` with something :-)
   maxsegs[isnothing.(maxsegs)].= Nₛ_before .+ (1:Nseggrow)
 end
@@ -367,5 +367,5 @@ end
 
 `function step!(::Val{:D_d}, pWN, WS,decayS, pα,povp_Mₛ, params)``
 
-### Ανάπτυξη νέων συνάψεων
+## Ανάπτυξη νέων συνάψεων
 - performance!
