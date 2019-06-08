@@ -15,7 +15,7 @@ using Lazy
 
 dir= "design_walkthrough"
 out_dir= joinpath(dir,"build/")
-jmd_files= @>> readdir(dir) map(f->joinpath(dir,f)) map(abspath) filter(s->match(r".*jmd",s)|>!isnothing)
+jmd_files= @>> readdir(dir) filter(s->match(r".*jmd",s)|>!isnothing) map(f->joinpath(dir,f)) map(abspath) 
 
 weave.(jmd_files, out_path= out_dir, doctype= "md2tex")
 
