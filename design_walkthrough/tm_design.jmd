@@ -145,9 +145,10 @@ Nₛ()= size(D_d,2)
 Για παρακάτω υπολογισμό χρειαζόμαστε να ανατρέχουμε σε όλους τους δενδρίτες που ανήκουν σε μια μικροστήλη.
 Αν και θα ήταν εφικτό να χρησιμοποιούσαμε τον πίνακα `ΝS` και για αυτή τη δουλειά
 (οι νευρώνες που ανήκουν στη μικροστήλη βρίσκονται εύκολα)
-είναι πιο απλό να εισάγουμε μια ακόμα μεταβλητή κατάστασης, τον πίνακα γειτνίασης
+είναι αρκετά πιο αποδοτικό να εισάγουμε μια ακόμα μεταβλητή κατάστασης, τον πίνακα γειτνίασης
 δενδριτών - μικροστηλών `SC`:
 ```julia; results= "hidden"
+col2cell(col)= (col-1)*k+1 : col*k
 SC= spzeros(Bool, 0,Nc)
 ```
 
@@ -172,10 +173,14 @@ SC= spzeros(Bool, 0,Nc)
 και αποσκοπεί στη βραδεία μείωση των συνάψεων που δεν οδηγούν σε ενεργοποίηση του νευρώνα τους.
 Πέρα από την προσαρμογή, αναπτύσσονται και νέες συνάψεις μεταξύ των τωρινών νικητών δενδριτών
 και των νικητών νευρώνων της προηγούμενης στιγμής.
-Οι συναρτήσεις `sparse_foreach` και `learn_sparsesynapses!` θα περιγραφούν μετά.
+Οι συναρτήσεις `sparse_foreach`, `learn_sparsesynapses!` και `growsynapses!` θα περιγραφούν μετά.
+
+Το `p` στην αρχή γνωστών ονομάτων, όπως `pWN`, σημαίνει previous, προηγούμενη στιγμή.
 
 ```julia; results= "hidden"
-function step!(::Val{:D_d},pWN,WS,decayS, pα,povp_Mₛ, params)
+using Parameters
+using Lazy: @>, @>>
+function step!(::Val{:D_d}, pWN, WS,decayS, pα,povp_Mₛ, params)
   @unpack p⁺,p⁻,LTD_p⁻,synapseSampleSize,init_permanence = params
   # Learn synapse permanences according to Hebbian learning rule
   sparse_foreach((scol,cell_i)->
@@ -258,45 +263,109 @@ col2seg(col)= rowvals(SC[:,col])
 έχουν με τους προηγουμένως ενεργούς νευρώνες `pα`.
 
 ```julia; results= "hidden"
-ovp_Mₛ(pa)= D_d'pα
+ovp_Mₛ(a)= D_d'α
 ```
 
 Με αυτά τα δεδομένα, μπορούμε να υπολογίσουμε το νικητή δενδρίτη για κάθε μικροστήλη ή, αν δεν υπάρχει νικητής,
 να επιστρέψουμε `nothing` σημαίνοντας την ανάγκη ανάπτυξης νέου δενδρίτη.
 ```julia; results= "hidden"
-function bestmatch(col,ovp_Mₛ,θ_stimulus_learn)
+function bestmatch(col, povp_Mₛ, θ_stimulus_learn)
   segs= col2seg(col)
   isempty(segs) && return nothing   # If there's no existing segments in the column
-  m,i= findmax(ovp_Mₛ[segs])
+  m,i= findmax(povp_Mₛ[segs])
   m > θ_stimulus_learn ? segs[i] : nothing
 end
 ```
 
-Η επόμενη βοηθητική διαδικασία είναι η εύρεση του νευρώνα μιας στήλης με τον ελάχιστο αριθμό δενδριτών,
-για να επιλεχθεί ως νικητής και να αναπτύξει νέο δενδρίτη.
+Συνδυάζοντας τους νικητές δενδρίτες εφόσον υπάρχουν με τους νέους δενδρίτες όπου απαιτούνται,
+αποκτάται ένας νικητής δενδρίτης για κάθε μικροστήλη σε έξαρση:
 ```julia; results= "hidden"
-function leastusedcell(synapses,col)
-  cellsWithSegs= cellXseg(synapses)[:,col2seg(synapses,col)].rowval|> countmap_empty
-  cellsWithoutSegs= setdiff(col2cell(col,synapses.cellϵcol), cellsWithSegs|> keys)
-  isempty(cellsWithoutSegs) ?
-      findmin(cellsWithSegs)[2] : rand(synapses.rng, cellsWithoutSegs)
+function maxsegϵburstcol!(povp_Mₛ,θ_stimulus_learn)
+  burstingCols= findall(burst())
+  # Make the result vector before to specify the type -- otherwise it won't hold `nothing`
+  maxsegs= Vector{Option{Int}}(undef,length(burstingCols))
+  map!(col->bestmatch(col,povp_Mₛ,θ_stimulus_learn), maxsegs, burstingCols)
+  growseg!(maxsegs,burstingCols)
+  @> maxsegs bitarray(Nₛ())
+end
+
+# Create a bitarray with `true` only at `idx`.
+bitarray(idx,dims)= begin
+  r= falses(dims); r[idx].= true
+  return r
+end
+bitarray(idx::Int,dims)= begin
+  r= falses(dims); r[idx]= true
+  return r
 end
 ```
 
+### Ανάπτυξη νέων δενδριτών
+
 Σε περίπτωση που κανένας δενδρίτης μικροστήλης σε εξαρση δεν έχει ερεθιστεί `> θ_stimulus_learn`,
 τότε δημιουργείται νέος δενδρίτης στο νευρώνα της μικροστήλης που έχει τους λιγότερους.
+Αυτή η διαδικασία περιγράφεται στη `growseg!`.
+Τα `maxsegs` έχουν συμβολικά τιμή `nothing` για τις στήλες που χρειάζονται νέο δενδρίτη.
 
-<growseg!>
-<maxsegϵburstcol!>
+Η αποδοτική ανάπτυξη των νέων δενδριτών εμφανίζει μια προγραμματιστική δυσκολία, γιατί απαιτεί την αλλαγή τριών μεγάλων αραιών πινάκων `SC`, `NS`, `D_d`,
+που στη Julia εκφράζονται ως αμετάβλητα αντικείμενα.
+Η απλούστερη λογική θα ήταν να αντικατασταθεί ο κάθε πίνακας με ένα νέο,
+αντίγραφο του παλαιού συν τα νέα στοιχεία:
+```julia; term=true; tangle=false
+using Random;
+SC2= [SC; bitrand(Nc)]
+```
 
-### Προσαρομογή συνάψεων με προηγουμένως ενεργούς νευρώνες
+Με έξυπνους χαμηλού επιπέδου χειρισμούς όμως, που θα παρατεθούν στο επόμενο κεφάλαιο ως αναφορά,
+μπορούμε να διατηρήσουμε τα αρχικά δεδομένα στη μνήμη και να έχουμε τις ελάχιστες δυνατές αντιγραφές.
+Ως παρενέργεια, οι συναρτήσεις `vcat!!, hcat!!` που το επιτυγχάνουν αυτό καταστρέφουν τη δομή του αντικειμένου που τροποποιούν,
+οπότε πρέπει να χρησιμοποιηθούν με πολλή προσοχή.
+Η Julia δεν καθιστά άδικα τη διαδικασία αυτή δύσκολη.
+
+Η επόμενη βοηθητική συνάρτηση είναι η εύρεση του νευρώνα μιας στήλης με τον ελάχιστο αριθμό δενδριτών,
+για να επιλεχθεί ως νικητής και να αναπτύξει νέο δενδρίτη.
+```julia; results= "hidden"
+import StatsBase: countmap
+function leastusedcell(col)
+  neuronsWithSegs= NS[:,col2seg(col)].rowval|> countmap_empty
+  neuronsWithoutSegs= setdiff(col2cell(col), neuronsWithSegs|> keys)
+  # If there's no neurons without dendrites, return the one with the fewest
+  isempty(neuronsWithoutSegs) ?
+      findmin(neuronsWithSegs)[2] : rand(neuronsWithoutSegs)
+end
+# [Dict] Count the frequency of occurence for each element in x
+countmap_empty(x)= isempty(x) ? x : countmap(x)
+```
+
+Για την ανάπτυξη των δενδριτών πρέπει αρχικά να υπολογιστούν οι νευρώνες τους οποίους θα επεκτείνουν,
+δηλαδή το νευρώνα με τους ελάχιστους υπάρχοντες δενδρίτες σε κάθε στήλη.
+
+```julia; results= "hidden"
+const Option{T}= Union{T,Nothing}
+function growseg!(maxsegs::Vector{Option{Int}},burstingcolidx)
+  neuronsToGrow= map(col-> leastusedcell(synapses,col), burstingcolidx[isnothing.(maxsegs)])
+  columnsToGrow= cell2col(neuronsToGrow)
+  Nₛ_before= Nₛ()
+  Nseggrow= length(neuronsToGrow)
+  _grow_synapse_matrices!(synapses::DistalSynapses,columnsToGrow,cellsToGrow,Nseggrow)
+  # Replace in maxsegs, `nothing` with something :-)
+  maxsegs[isnothing.(maxsegs)].= Nₛ_before .+ (1:Nseggrow)
+end
+function _grow_synapse_matrices!(columnsToGrow,neuronsToGrow,Nseggrow)
+  global SC= vcat!!(SC, columnsToGrow, trues(Nseggrow))
+  global NS= hcat!!(NS, neuronsToGrow, trues(Nseggrow))
+  global D_d= hcat!!(D_d, Nseggrow)
+end
+```
 
 
-### Υπολογισμός νικητών νευρώνων
+## Υπολογισμός νικητών νευρώνων
 
 Οι προβλεπτικοί νευρώνες που μετά ενεργοποιούνται είναι και νικητές, δηλαδή `predicted() ∈ WΝ`.
 Από τις μικροστήλες σε έξαρση, αφού υπολογίσουμε τους δενδρίτες `WS` τους, οι νευρώνες που τους φέρουν είναι οι νικητές.
 
+
+`function step!(::Val{:D_d}, pWN, WS,decayS, pα,povp_Mₛ, params)``
 
 ### Ανάπτυξη νέων συνάψεων
 - performance!
