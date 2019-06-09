@@ -14,6 +14,8 @@
 % https://tex.stackexchange.com/questions/20585/fixing-an-overfull-box
 \emergencystretch=0.7em
 
+\hyphenation{Hierar-chi-cal}
+
 \newcommand{\titlestring}{Υψηλού επιπέδου υλοποίηση των αλγορίθμων Hierarchical Temporal Memory σε Julia}
 \title{
 \titlestring \\
@@ -21,8 +23,9 @@
 {\large Σχολή Ηλεκτρολόγων Μηχανικών και Μηχανικών Υπολογιστών}
 }
 
-\author{Κωνσταντίνος Σαμαράς-Τσακίρης}
-\date{2019-06-05}
+\author{Κωνσταντίνος Σαμαράς-Τσακίρης\\ \bigskip
+Επιβλέπων καθηγητής: Νίκος Πιτσιάνης}
+\date{2019-06-10}
 
 
 \begin{document}
@@ -38,7 +41,7 @@
 \chapter{Η θεωρία HTM}
 \input{chapters/htm.tex}
 
-\chapter{Υλοποίηση HTM σε Julia}
+\chapter{Υλοποίηση HTM σε Julia} \label{impl}
 \input{design_walkthrough/build/sp_design_body.tex}
 \input{design_walkthrough/build/sp_design_overall_body.tex}
 \input{design_walkthrough/build/tm_design_body.tex}
@@ -48,9 +51,9 @@
 
 \printbibliography
 
-\begin{appendices}
-\chapter{Τμήματα κώδικα}
-\input{chapters/app_codesnip.tex}
-\end{appendices}
+%\begin{appendices}
+%\chapter{Τμήματα κώδικα}
+%\input{chapters/app_codesnip.tex}
+%\end{appendices}
 
 \end{document}

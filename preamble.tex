@@ -1,4 +1,3 @@
-\usepackage{xltxtra}	% XeLaTeX
 \usepackage{fontspec}
 \usepackage{float}
 \usepackage{graphicx}
@@ -8,7 +7,6 @@
 \usepackage{rotating}	% Sideways figure
 \usepackage{amsmath}  % align equations
 \usepackage{centernot}
-\usepackage{hyperref}	% Hyperlinks
 \usepackage[font=footnotesize]{caption}	% Hyperlinks to float top
 \usepackage{subcaption}
 \usepackage{cleveref}
@@ -19,6 +17,12 @@
 %\usepackage{jlcode}
 \usepackage{listings}
 \usepackage{fancyhdr} % headers-footers
+\fancyhf{}
+\lhead{\small\scshape{\leftmark}}
+\rhead{\small\scshape\nouppercase{\rightmark}}
+\cfoot{\small\thepage}
+\pagestyle{fancy}
+
 \usepackage{mathtools}
 % Tables
 \usepackage{array}
@@ -29,6 +33,8 @@
 \setdefaultlanguage[variant=mono]{greek}
 \setotherlanguage{english}
 \enablehyphenation
+\newcommand{\EN}[1]{\foreignlanguage{english}{#1}}
+
 \usepackage{hyphsubst}
 \usepackage{alphabeta}  % greek letters in maths mode
 \usepackage{csquotes}
@@ -108,3 +114,5 @@ sorting=ynt
 %\renewcommand\thesubfigure{(\alph{subfigure})}
 
 \let\emph\textbf
+
+\usepackage{hyperref}	% Hyperlinks
