@@ -1,4 +1,4 @@
-# Υλοποίηση της Χρονικής Μνήμης
+# Υλοποίηση Χρονικής Μνήμης
 
 Για τη χρονική μνήμη το επίπεδο με τις `Ν` μικροστήλες ``y_i`` αναλύεται σε έναν όγκο νευρώνων ``y_{ij}``,
 με κάθε μικροστήλη να απαρτίζεται από `k` νευρώνες.
@@ -37,7 +37,6 @@
 1. προσαρμογή συνάψεων, δημιουργία νέων συνάψεων και δενδριτών
 1. προσδοκία / υπολογισμός προβλετικών νευρώνων
 
-
 ## Ενεργοποίηση χρονικής μνήμης
 
 Όπως σχολιάστηκε στο σχήμα ``@\ref{fig:tm}@``, ενώ προτεραιότητα στην ενεργοποίηση έχουν οι νευρώνες που ήταν σε προβλετική κατάσταση
@@ -56,7 +55,7 @@ end
 Εν προκειμένω μπορούμε κατευθείαν να ορίσουμε την έξοδο της μακροεντολής.
 Οι τελεστές `$` θα _παρεμβάλουν_ τις "τιμές" των ορισμάτων της μακροεντολής --- δηλαδή τα σύμβολα με τα οποία την καλέσαμε.
 Εποπτικά:
-```julia; term= true
+```julia; term= true; tangle= false
 m1= @macroexpand @percolumn(sum,a,3)
 a= rand(Int8,12);
 reshape(a,3,:)
@@ -92,7 +91,7 @@ activate(c,Π)= (predicted(c,Π) .| burst(c,Π)')|> vec
 
 Με αυτά τα εφόδια, ας πειραματιστούμε με την ενεργοποίηση της χρονικής μνήμης:
 ```julia; term= true; tangle= false
-const k= 2;
+k= 2;
 c= [1,0,0,1].==1;
 Π_= [0,0, 1,0, 1,1, 1,0].==1;
 burst(c,Π_)'
@@ -102,9 +101,9 @@ reshape(activate(c,Π_),k,:)
 
 Έστω για τα επόμενα πειράματα και τα μεγέθη:
 ```julia; results= "hidden"
-const Nc= 4
-const k= 2
-const Nₙ= Nc*k
+Nc= 4
+k= 2
+Nₙ()= Nc*k
 ```
 
 
@@ -117,7 +116,7 @@ const Nₙ= Nc*k
 ```julia; results= "hidden"
 W_d()= D_d .> θ_permanence_dist
 Πₛ(α)= W_d()'α .> θ_stimulus_activate
-Π(α)= NS*Πₛ(α)
+Π(α)= NS*Πₛ(α) .> 0
 ```
 
 Μας ενδιαφέρουν επίσης και οι δενδρίτες που δεν ενεργοποιήθηκαν, αλλά έχουν σημαντικό αριθμό
@@ -145,8 +144,8 @@ Mₛ(M_ovp)= M_ovp .> θ_stimulus_learn
 ```julia; results= "hidden"
 using SparseArrays
 const 𝕊𝕢= UInt8
-D_d= spzeros(𝕊𝕢, Nₙ,0)
-ΝS= spzeros(Bool,Nₙ,0)
+D_d= spzeros(𝕊𝕢, Nₙ(),0)
+NS= spzeros(Bool,Nₙ(),0)
 Nₛ()= size(D_d,2)
 ```
 
@@ -196,7 +195,7 @@ function step!(::Val{:D_d}, pWN, WS,decayS, pα,povp_Mₛ, params)
                  D_d, WS)
   # Decay "matching" synapses that didn't result in an active neuron
   sparse_foreach((scol,cell_i)->
-                    learn_sparsesynapses!(scol,cell_i, .!pα,zero(permT),LTD_p⁻),
+                    learn_sparsesynapses!(scol,cell_i, .!pα,zero(𝕊𝕢),LTD_p⁻),
                  D_d, decayS)
   # Grow new synapses between this step's winning dendrites
   # and previous winning neurons
@@ -239,6 +238,22 @@ sparse_foreach(f, s::SparseMatrixCSC,selectedColumnIdx)=
     ci= nzrange(s,c)
     f((@view nonzeros(s)[ci]),rowvals(s)[ci])
   end
+⊕(a::T,b::T) where {T<:Unsigned}= a+b>=a ? a+b : typemax(T)
+⊖(a::T,b::T) where {T<:Unsigned}= a-b<=a ? a-b : one(T)
+```
+
+Μια βοηθητική δομή που διατρέχει αποδοτικά μόνο τα Trues ενός διανύσματος λογικών τιμών:
+```julia; results= "hidden"
+struct Truesof
+  b::BitArray
+end
+@inline Base.length(B::Truesof)= count(B.b)
+@inline Base.eltype(::Type{Truesof})= Int
+Base.iterate(B::Truesof, i::Int=1)= begin
+  i= findnext(B.b, i)
+  i === nothing ? nothing : (i, i+1)
+end
+Base.collect(B::Truesof)= collect(B.b)
 ```
 
 #### Δενδρίτες που υφίστανται LTD
@@ -260,7 +275,7 @@ padfalse(b::Vector{T},dim) where T= [b;zeros(T,dim-length(b))]
 και τώρα ενεργοποιήθηκαν, αυτοί είναι ταυτόχρονα και νικητές `WS`.
 
 ```julia; results= "hidden"
-WS_activecol(pΠₛ,α)= pΠₛ .& (ΝS'α .>0)
+WS_activecol(pΠₛ,α)= pΠₛ .& (NS'α .>0)
 ```
 
 Στους νικητές όμως ανήκει και 1 δενδρίτης από κάθε μικροστήλη σε έξαρση.
@@ -280,11 +295,7 @@ col2seg(col)= rowvals(SC[:,col])
 ```
 
 Η υποψηφιότητα των δενδριτών εξαρτάται από το πόσες εν δυνάμει συνάψεις (δηλαδή όχι απαραίτητα συνδεδεμένες)
-έχουν με τους προηγουμένως ενεργούς νευρώνες `pα`.
-
-```julia; results= "hidden"
-ovp_Mₛ(a)= D_d'α
-```
+έχουν με τους προηγουμένως ενεργούς νευρώνες `pα`, `M_ovp(pα)`.
 
 Με αυτά τα δεδομένα, μπορούμε να υπολογίσουμε το νικητή δενδρίτη για κάθε μικροστήλη ή, αν δεν υπάρχει νικητής,
 να επιστρέψουμε `nothing` σημαίνοντας την ανάγκη ανάπτυξης νέου δενδρίτη.
@@ -336,11 +347,75 @@ using Random;
 SC2= [SC; bitrand(Nc)']
 ```
 
-Με έξυπνους χαμηλού επιπέδου χειρισμούς όμως, που θα παρατεθούν στο επόμενο κεφάλαιο ως αναφορά,
+#### Αποδοτική τροποποίηση αραιών πινάκων
+
+Με έξυπνους χαμηλού επιπέδου χειρισμούς όμως, που παρατίθενται μόνο ως αναφορά,
 μπορούμε να διατηρήσουμε τα αρχικά δεδομένα στη μνήμη και να έχουμε τις ελάχιστες δυνατές αντιγραφές.
 Ως παρενέργεια, οι συναρτήσεις `vcat!!, hcat!!` που το επιτυγχάνουν αυτό καταστρέφουν τη δομή του αντικειμένου που τροποποιούν,
 οπότε πρέπει να χρησιμοποιηθούν με πολλή προσοχή.
 Η Julia δεν καθιστά άδικα τη διαδικασία αυτή δύσκολη.
+
+```julia; results= "hidden"
+function vcat!!(s::SparseMatrixCSC, J,V)
+  length(V)==length(J) || error("[vcat!!] J,V must have the same length")
+  k= length(V); k_s= nnz(s)
+  m= s.m+k
+  resize!(s.nzval, k_s+k)
+  resize!(s.rowval, k_s+k)
+
+  # Rearrange values-to-add by ascending column
+  col_order= sortperm(J)
+  J= J[col_order]; V= V[col_order]
+  # Calculate how many steps forward each column start moves
+  colptr_cat= copy(s.colptr)
+  for c in J
+     @inbounds colptr_cat[c+1:end].+= 1
+  end
+
+  ## Fill in the new values at the correct places
+  # NOTE start from the end, because that's where the empty places are
+  for c= s.n:-1:1
+    colrange= s.colptr[c] : s.colptr[c+1]-1
+    colrange_cat= colptr_cat[c] : colptr_cat[c+1]-1
+    # 1: Transport previous values to new places`
+    @inbounds s.rowval[colrange_cat[1:length(colrange)]].= s.rowval[colrange]
+    @inbounds s.nzval[colrange_cat[1:length(colrange)]].= s.nzval[colrange]
+
+    # 2: add new values
+    if length(colrange_cat) > length(colrange)
+      # OPTIMIZE J.==c is a lot of comparisons!
+       @inbounds s.rowval[colrange_cat[length(colrange)+1:end]].=
+          col_order[J .== c] .+ s.m
+       @inbounds s.nzval[colrange_cat[length(colrange)+1:end]].= V[J .== c]
+    end
+  end
+
+  # Construct the new SparseMatrixCSC
+  SparseMatrixCSC(m,s.n,colptr_cat,s.rowval,s.nzval)
+end
+function hcat!!(s::SparseMatrixCSC, I,V)
+  length(V)==length(I) || error("[hcat!!] I,V must have the same length")
+  k= length(V); k_s= nnz(s)
+  n= s.n+k
+  resize!(s.nzval, k_s+k)
+  resize!(s.rowval, k_s+k)
+  resize!(s.colptr, n+1)
+  s.nzval[k_s+1:end].= V
+  s.rowval[k_s+1:end].= I
+  s.colptr[s.n+2:end].= s.colptr[s.n+1] .+ (1:k)
+  # Construct the new SparseMatrixCSC
+  SparseMatrixCSC(s.m,n,s.colptr,s.rowval,s.nzval)
+end
+# Change just the number of columns, without adding any new values
+function hcat!!(s::SparseMatrixCSC,k)
+  n= s.n+k
+  resize!(s.colptr,n+1)
+  s.colptr[s.n+2:end].= s.colptr[s.n+1]
+  SparseMatrixCSC(s.m,n,s.colptr,s.rowval,s.nzval)
+end
+```
+``@\bigskip@``
+
 
 Η επόμενη βοηθητική συνάρτηση είναι η εύρεση του νευρώνα μιας στήλης με τον ελάχιστο αριθμό δενδριτών,
 για να επιλεχθεί ως νικητής και να αναπτύξει νέο δενδρίτη.
@@ -363,11 +438,11 @@ countmap_empty(x)= isempty(x) ? x : countmap(x)
 ```julia; results= "hidden"
 const Option{T}= Union{T,Nothing}
 function growseg!(maxsegs::Vector{Option{Int}}, burstingcolidx)
-  neuronsToGrow= map(col-> leastusedcell(synapses,col), burstingcolidx[isnothing.(maxsegs)])
+  neuronsToGrow= map(col-> leastusedcell(col), burstingcolidx[isnothing.(maxsegs)])
   columnsToGrow= cell2col(neuronsToGrow)
   Nₛ_before= Nₛ()
   Nseggrow= length(neuronsToGrow)
-  _grow_synapse_matrices!(columnsToGrow,cellsToGrow,Nseggrow)
+  _grow_synapse_matrices!(columnsToGrow,neuronsToGrow,Nseggrow)
   # Replace in maxsegs, `nothing` with something :-)
   maxsegs[isnothing.(maxsegs)].= Nₛ_before .+ (1:Nseggrow)
 end
@@ -376,6 +451,7 @@ function _grow_synapse_matrices!(columnsToGrow,neuronsToGrow,Nseggrow)
   global NS= hcat!!(NS, neuronsToGrow, trues(Nseggrow))
   global D_d= hcat!!(D_d, Nseggrow)
 end
+cell2col(cells)= @. (cells-1) ÷ k + 1
 ```
 
 Συνδυάζοντας όλα τα παραπάνω στοιχεία, προκύπτει η διαδικασία υπολογισμού των `WS`:
@@ -395,7 +471,7 @@ end
 
 ```julia; results= "hidden"
 calculate_WN(c,pΠ,WS_burstcol)= begin
-  WN= predicted(c,pΠ)
+  WN= predicted(c,pΠ)|> vec
   WN[NS*WS_burstcol.>0].= true
   return WN
 end
@@ -418,15 +494,15 @@ end
 ```julia; results= "hidden"
 growsynapses!(pWN,WS, povp_Mₛ, synapseSampleSize,init_permanence)= begin
   pWN= findall(pWN)
-  !isempty(pWN) && _growsynapses!(pWC,WS, povp_Mₛ,synapseSampleSize,init_permanence)
+  !isempty(pWN) && _growsynapses!(pWN,WS, povp_Mₛ,synapseSampleSize,init_permanence)
 end
 function _growsynapses!(pWN,WS, povp_Mₛ, synapseSampleSize,init_permanence)
   Nnewsyn(ovp)= max(0, synapseSampleSize - ovp)
-  psampling_newsyn= min.(1.0, Nnewsyn.( (@> povp_Mₛ padfalse(Nₛ()))[WS] ) ./ length(WN))
-  selectedWN= similar(WN)
+  psampling_newsyn= min.(1.0, Nnewsyn.( (@> povp_Mₛ padfalse(Nₛ()))[WS] ) ./ length(pWN))
+  selectedWN= similar(pWN)
   foreach(Truesof(WS), psampling_newsyn) do seg_i, p
     # Bernoulli sampling from WN with mean sample size == Nnewsyn
-    randsubseq!(selectedWN,WN,p)
+    randsubseq!(selectedWN,pWN,p)
     D_d[selectedWN, seg_i].= init_permanence
   end
 end
@@ -454,16 +530,63 @@ end
 - `pΠₛ     ∈ 𝔹^Nₛ`: προηγούμενη πρόβλεψη δενδριτών
 - `povp_Mₛ ∈ ℕ^Nₛ`: προηγούμενη επικάλυψη (σκορ) δενδριτών που «ταιριάζουν»
 
+Αρχικοποίηση πινάκων:
+```julia
+init_TMmatrices()= begin
+  global D_d= spzeros(𝕊𝕢, Nₙ(),0)
+  global NS= spzeros(Bool,Nₙ(),0)
+  global SC= spzeros(Bool, 0,Nc)
+end
+```
+
 Για την ανανέωση αυτής της κατάστασης δίνεται μια συγκεντρωτική συνάρτηση βήματος της χρονικής μνήμης.
 ```julia; results= "hidden"
 function step!(::Val{:tm}, c, pΠ,pΠₛ, pWN,pα, povp_Mₛ, params)
   α= activate(c,pΠ)
   # Get elements of prediction
-  _π= Π(α); _πₛ= Πₛ(α); _ovp_Mₛ= M_ovp(α);
+  _π= Π(α); _πₛ= Πₛ(α); ovp_Mₛ= M_ovp(α);
   # Learn
   WS, WS_burst= calculate_WS(pΠₛ, povp_Mₛ, α, burst(c,pΠ))
   WN= calculate_WN(c, pΠ, WS_burst)
   step!(:D_d, pWN, WS,decayS(Mₛ(povp_Mₛ),α), pα,povp_Mₛ, params)
-  return α, _π,_πₛ, WN, _mₛ,_ovp_Mₛ
+  return α, _π,padfalse(_πₛ,Nₛ()), WN, padfalse(ovp_Mₛ,Nₛ())
+end
+step!(::Val{:tm}, c, params)= step!(:tm, c, falses(Nₙ()),falses(Nₛ()), falses(Nₙ()),falses(Nₙ()),
+    falses(Nₛ()), params)
+step!(s::Symbol, args...)= step!(Val(s),args...)
+```
+
+Συγκεντρώνοντας τις παραμέτρους:
+```julia; results= "hidden"
+@with_kw struct TMParams
+  θ_stimulus_activate::Int = 2
+  θ_stimulus_learn::Int    = 1
+  θ_permanence_dist::𝕊𝕢    = round(𝕊𝕢,.5typemax(𝕊𝕢))
+  p⁺::𝕊𝕢                   = round(𝕊𝕢,.2typemax(𝕊𝕢))
+  p⁻::𝕊𝕢                   = round(𝕊𝕢,.04typemax(𝕊𝕢))
+  LTD_p⁻::𝕊𝕢               = round(𝕊𝕢,.002typemax(𝕊𝕢))
+  synapseSampleSize::Int   = 25
+  init_permanence::𝕊𝕢      = round(𝕊𝕢,.45typemax(𝕊𝕢))
+end
+```
+
+Παράδειγμα:
+```julia; term= true; tangle= false
+using Random;
+params= TMParams();
+@unpack_TMParams params
+Nc= 10; k= 3;
+init_TMmatrices();
+c= bitrand(Nc)
+α,_π,_πₛ,WN,ovp_Mₛ= step!(:tm, c, params)
+for i in 1:50
+  bitsToFlip= randsubseq(1:Nc, 0.05)
+  c[bitsToFlip].= .!c[bitsToFlip]
+  global α,_π,_πₛ,WN,ovp_Mₛ= step!(:tm, c, _π,_πₛ,WN,α,ovp_Mₛ, params)
+  (i==5 || i==50) && begin
+    display(reshape(α,k,:))
+    display(reshape(_π,k,:))
+    display((nnz(D_d),Nₛ()))
+  end
 end
 ```
