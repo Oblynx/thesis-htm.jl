@@ -14,16 +14,21 @@
 % https://tex.stackexchange.com/questions/20585/fixing-an-overfull-box
 \emergencystretch=0.7em
 
-\hyphenation{Hierar-chi-cal}
-
 \newcommand{\titlestring}{Υψηλού επιπέδου υλοποίηση των αλγορίθμων Hierarchical Temporal Memory σε Julia}
-\title{
+\newcommand{\authorstring}{Κωνσταντίνος Σαμαράς-Τσακίρης}
+\title{%
 \titlestring \\
 {\large Αριστοτέλειο Πανεπιστήμιο Θεσσαλονίκης}\\
 {\large Σχολή Ηλεκτρολόγων Μηχανικών και Μηχανικών Υπολογιστών}
 }
 
-\author{Κωνσταντίνος Σαμαράς-Τσακίρης\\ \bigskip
+\hypersetup{%
+    pdfencoding=auto,
+    pdfauthor={\authorstring},
+    pdftitle={\titlestring}
+    }
+
+\author{\authorstring\\ \bigskip
 Επιβλέπων καθηγητής: Νίκος Πιτσιάνης}
 \date{2019-06-10}
 
@@ -33,10 +38,12 @@
 \maketitle
 \input{chapters/abstract.tex}
 
+\pagenumbering{roman}
 \tableofcontents{}
 \listoffigures
 
 \chapter{Εισαγωγή}
+\pagenumbering{arabic}
 \input{chapters/introduction.tex}
 
 \chapter{Η θεωρία HTM}
