@@ -9,7 +9,6 @@
 \usepackage{centernot}
 \usepackage[font=footnotesize]{caption}	% Hyperlinks to float top
 \usepackage{subcaption}
-\usepackage{cleveref}
 %\usepackage{units}		% dB unit
 \usepackage[a4paper,left=25.4mm,right=25.4mm,top=25mm,bottom=25mm]{geometry}	% margins
 \usepackage[section]{placeins}	% Don't let floats float before sections
@@ -28,21 +27,9 @@
 \usepackage{array}
 \usepackage{booktabs}
 
-\usepackage{microtype}
-\usepackage{polyglossia}
-\setdefaultlanguage[variant=mono]{greek}
-\setotherlanguage{english}
-\enablehyphenation
-\newcommand{\EN}[1]{\foreignlanguage{english}{#1}}
-
 \usepackage{hyphsubst}
 \usepackage{alphabeta}  % greek letters in maths mode
 \usepackage{csquotes}
-\usepackage[
-backend=biber,
-style=ieee,
-sorting=ynt
-]{biblatex}
 \usepackage{xcolor}
 \usepackage{enumitem}
 
@@ -65,6 +52,19 @@ sorting=ynt
 \setromanfont{Noto Serif}
 \setsansfont{Noto Sans}
 \setmonofont{Everson Mono}
+
+\usepackage{microtype}
+\usepackage{polyglossia}
+\setdefaultlanguage[variant=mono]{greek}
+\setotherlanguage{english}
+\enablehyphenation
+\newcommand{\EN}[1]{\foreignlanguage{english}{#1}}
+\usepackage[%
+backend=biber,
+style=ieee,
+sorting=ynt
+]{biblatex}
+
 
 %\geometry{margin=2.5cm}
 \pagestyle{fancy}
@@ -118,3 +118,4 @@ sorting=ynt
 \let\emph\textbf
 
 \usepackage{hyperref}	% Hyperlinks
+\usepackage{cleveref}
