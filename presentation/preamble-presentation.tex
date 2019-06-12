@@ -1,15 +1,26 @@
 \usepackage{fancybox}
 \usepackage{minibox}
 %\usepackage[backend=biber, style=numeric, citestyle=authoryear]{biblatex}
-%\usepackage[absolute,overlay]{textpos}
+\usepackage[absolute,overlay]{textpos}
 \usetheme{metropolis}
 \graphicspath{ {../figures/},{../design_walkthrough/build/} }
 
-\definecolor{light-gray}{gray}{0.92}
+\definecolor{light-gray}{gray}{0.22}
 \usepackage{../jlcode}
 %\lstset{columns=fullflexible,numbersep=0pt,resetmargins= true}
 
 \usepackage{minted}
-\usemintedstyle{paraiso-light}
-\usemintedstyle{lovelace}
+\usemintedstyle{paraiso-dark}
+%\usemintedstyle{lovelace}
 %\usemintedstyle{friendly}
+\setmonofont{Everson Mono}
+
+\defbeamertemplate{description item}{align left}{\insertdescriptionitem\hfill}
+
+\setbeamercolor{framesource}{fg=gray}
+\setbeamerfont{framesource}{size=\tiny}
+\newcommand{\source}[1]{\begin{textblock*}{4cm}(0.3cm,8.6cm)
+    \begin{beamercolorbox}[ht=0.5cm,left]{framesource}
+        \usebeamerfont{framesource}\usebeamercolor[fg]{framesource} Πηγή: {#1}
+    \end{beamercolorbox}
+\end{textblock*}}

@@ -5,7 +5,9 @@
 \input{preamble-presentation.tex}
 
 %---		BIBLIOGRAPHY		---%
-\bibliography{../references.bib}
+\addbibresource{../references.bib}
+\addbibresource{../extra_refs/primary.bib}
+\addbibresource{../extra_refs/secondary.bib}
 %\setbeamertemplate{bibliography item}[text]
 \renewcommand*{\bibfont}{\footnotesize}
 
@@ -40,44 +42,67 @@
 			\includegraphics[width=\textwidth]{../figures/numenta_neuron}
 		\end{subfigure}
 	\end{figure}
+	\source{\parencite{wiki_pyramidalcell,hawkinsWhyNeuronsHave2016}}
 \end{frame}
 
 \begin{frame}{Μικροστήλες}
   \centering
   \includegraphics[width=\textwidth]{../figures/layer-minicolumn}
+  \source{\parencite{cuiContinuousOnlineSequence2016}}
 \end{frame}
 
 \begin{frame}{Φλοιικές στήλες}
   \centering
   \includegraphics[width=.6\textwidth]{../figures/layers_in_column}
+  \source{\parencite{hawkinsTheoryHowColumns2017}}
 \end{frame}
 
 \begin{frame}{Αναστολή μεταξύ μικροστηλών}
   \centering
   \includegraphics[width=\textwidth]{../figures/spatial_hardware}
+  \source{\parencite{billaudellePortingHTMModels2015}}
 \end{frame}
 
 \begin{frame}{Χωρικός συγκεντρωτής}
+  \only<1>{
   \centering
   \includegraphics[width=.9\textwidth]{../figures/vlsi-present/spatpool}
+  \source{\parencite{cuiHTMSpatialPooler2017}}
+  }
+  \only<2->{
+  \begin{columns}
+    \column{0.5\textwidth}
+    \includegraphics[width=1.15\textwidth]{../figures/vlsi-present/spatpool}
+    \source{\parencite{cuiHTMSpatialPooler2017}}
+    \column{0.5\textwidth}
+    \begin{block}{Βήματα}
+      \small
+      \begin{enumerate}
+        \setcounter{enumi}{-1}
+        \item \alert<3>{Αντιστοίχιση χώρων εισόδου/εξόδου, αρχικοποίηση εγγύς συνάψεων}
+        \item \alert<3>{Επικάλυψη μικροστηλών με συνδεδεμένες εξόδους}
+        \item Παρώθηση
+        \item Τοπική αναστολή
+        \item Ενεργοποίηση μικροστηλών που νίκησαν
+        \item \alert<3>{Εκμάθηση συνάψεων ενεργών μικροστηλών}
+      \end{enumerate}
+    \end{block}
+  \end{columns}
+  }
 \end{frame}
 
 \section{Στοιχεία Χωρικού Συγκεντρωτή}
-\begin{frame}[fragile]{Τοπολογία εισόδου/εξόδου: υπερκύβος}
-  \begin{block}{Δείκτης υπερκύβου}
-    \[ I(x_j; x_i^c, γ) = \mathit{true} \iff x_j \in \text{ hypercube} \]
-    \begin{itemize}
-      \item[] $x^c$: κέντρο υπερκύβου
-      \item[] $γ$: ακτίνα υπερκύβου
-    \end{itemize}
-  \end{block}
-  \begin{block}{Εν δυνάμει συνδέσεις}
-    \[ Π_i= \{j \;|\, I(x_j; x_i^c, γ) \wedge Z_{ij} < p\} \]
-    όπου $Ζ \in U(0,1)$ τυχαίος αριθμός
-  \end{block}
-\end{frame}
 
-\begin{frame}[fragile]{Τοπολογία εισόδου/εξόδου: υπερκύβος}
+\begin{frame}[fragile]{Αντιστοίχιση εισόδου/εξόδου: υπερκύβος}
+\begin{block}{Δείκτης υπερκύβου}
+  \[ I(x_j; x_i^c, γ) = \mathit{true} \iff x_j \in \text{ hypercube} \]
+  \vspace{-2.2\topsep}
+  \begin{description}
+    \item[$x^c$] κέντρο υπερκύβου
+    \item[$γ$] ακτίνα υπερκύβου
+  \end{description}
+\end{block}
+\pause
 \begin{minted}[fontsize=\scriptsize,bgcolor=light-gray,breaklines]{julia}
 struct Hypercube{N}
   xᶜ::NTuple{N,Int}
@@ -87,8 +112,7 @@ struct Hypercube{N}
 end
 Hypercube(xᶜ,γ,sz)= Hypercube(xᶜ,γ,sz, start(xᶜ,γ,sz))
 start(xᶜ,γ,sz)= CartesianIndices(map( (a,b)-> a:b,
-                    max.(xᶜ .- γ, 1),
-                    min.(xᶜ .+ γ, sz) ))
+                    max.(xᶜ .- γ, 1), min.(xᶜ .+ γ, sz) ))
 Base.collect(hc::Hypercube)= map(c->c.I, collect(hc.indices))
 
 jl> collect(Hypercube((1,1),1,(5,5)))
@@ -96,6 +120,184 @@ jl> collect(Hypercube((1,1),1,(5,5)))
  (1, 1)  (1, 2)
  (2, 1)  (2, 2)
 \end{minted}
+\end{frame}
+
+\begin{frame}[fragile]{Αρχικοποίηση συνάψεων}
+\begin{onlyenv}<1-2>
+\begin{block}{Εν δυνάμει συνδέσεις}
+  \[ Π_i= \{j \;|\, I(x_j; x_i^c, γ) \wedge Z_{ij} < p\} \]
+  όπου $Ζ \in U(0,1)$ τυχαίος αριθμός
+\end{block}
+\pause
+\begin{minted}[fontsize=\scriptsize,bgcolor=light-gray,breaklines]{julia}
+c2lᵢₙ= LinearIndices(szᵢₙ)
+c2lₛₚ= LinearIndices(szₛₚ)
+
+Dₚ= zeros(𝕊𝕢, prod(szᵢₙ),prod(szₛₚ))
+foreach(out_lattice()) do yᵢ
+  # Linear indices from hypercube
+  x= @>> yᵢ xᶜ xᵢ collect map(x->c2lᵢₙ[x...])
+  Dₚ[x, c2lₛₚ[yᵢ...]]= permanences(@> yᵢ xᶜ xᵢ)
+end
+
+@> yᵢ xᶜ xᵢ == xᵢ(xᶜ(yᵢ))
+\end{minted}
+\end{onlyenv}
+
+\only<3>{
+\begin{figure}
+  \includegraphics[width=\textwidth]{../design_walkthrough/build/figures/sp_design_15_1.pdf}
+\end{figure}
+}
+\end{frame}
+
+\begin{frame}[fragile]{Επικάλυψη}
+\begin{block}{Επικάλυψη μικροστηλών με συνδεδεμένες εισόδους}
+  \begin{align*}
+    \mathbf{W} &= \mathbf{D} \ge θ_c\\
+    o &= b\,\mathbf{W}\,z
+  \end{align*}
+  %\setbeamertemplate{description item}[align left]
+  \vspace{-2.2\topsep}
+  \begin{description}
+  \item[$\mathbf{W}$] [$ℓ_{in} × ℓ_{sp}$] συνδεδεμένες συνάψεις
+  \item[$z$] [$ℓ_{in}$] είσοδος
+  \item[$b$] [$ℓ_{sp}$] παρώθηση
+  \end{description}
+\end{block}
+\pause
+\begin{columns}[T]
+\column{0.6\textwidth}
+\begin{minted}[fontsize=\footnotesize,bgcolor=light-gray,breaklines]{julia}
+Wₚ()= Dₚ .≥ θ_permanence
+o(z)= @> (b() .* Wₚ()'z) reshape(szₛₚ)
+\end{minted}
+\pause
+\column{0.4\textwidth}
+\begin{block}{broadcasting}
+\begin{minted}[fontsize=\footnotesize,bgcolor=light-gray,breaklines]{julia}
+f(x::Int)= x+1;
+jl> f.([1; 10; 100])
+3-element Array{Int64,1}:
+   2
+  11
+ 101
+\end{minted}
+\end{block}
+\end{columns}
+\end{frame}
+
+\begin{frame}[fragile]{Εκμάθηση συνάψεων}
+\begin{block}{Κανόνας πλαστικότητας}
+  \[ \mathbf{ΔD} = p^+(z◦\mathbf{D}◦c) - p^-(\lnot z◦ \mathbf{D}◦c\]
+  \begin{description}
+    \item[$c$] ενεργοποίηση χωρικού συγκεντρωτή
+  \end{description}
+\end{block}
+\begin{onlyenv}<2>
+\begin{block}{Απλούστερος τρόπος}
+\begin{minted}[fontsize=\footnotesize,bgcolor=light-gray,breaklines]{julia}
+learn!(Dₚ,z,a)= begin
+  Dₚ[z,a]  .= (Dₚ[z,a].>0) .* (Dₚ[z,a]   .⊕ p⁺)
+  Dₚ[.!z,a].= (Dₚ[z,a].>0) .* (Dₚ[.!z,a] .⊖ p⁻)
+end
+\end{minted}
+\end{block}
+\end{onlyenv}
+\begin{onlyenv}<3>
+\begin{block}{Καλύτερα}
+\begin{minted}[fontsize=\footnotesize,bgcolor=light-gray,breaklines]{julia}
+learn!(Dₚ,z,a)= begin
+  Dₚactive= @view Dₚ[:,a]   # the only elements we touch
+  activeConn=   (Dₚactive .> 0) .&   z
+  inactiveConn= (Dₚactive .> 0) .& .!z
+  Dₚactive.= activeConn   .* (Dₚactive .⊕ p⁺) .+
+             inactiveConn .* (Dₚactive .⊖ p⁻)
+end
+\end{minted}
+\end{block}
+\end{onlyenv}
+\end{frame}
+
+\section{Χρονική μνήμη}
+
+\begin{frame}{Αναστολή \alert{εντός} μικροστηλών}
+  \centering
+  \includegraphics[width=.5\textwidth]{../figures/temporal_hardware}
+  \source{\parencite{billaudellePortingHTMModels2015}}
+\end{frame}
+
+\begin{frame}{Μνήμη ακολουθιών}
+  \centering
+  \only<1>{
+  \includegraphics[width=\textwidth]{../figures/numenta_temporal_memory1}
+	\source{\parencite{hawkinsWhyNeuronsHave2016}}
+  }
+  \only<2->{
+  \includegraphics[width=\textwidth]{../figures/numenta_temporal_memory2}
+	\source{\parencite{hawkinsWhyNeuronsHave2016}}
+  \pause
+  \begin{columns}[T]
+    \column{0.4\textwidth}
+    \begin{block}{Βήματα}
+      \small
+      \begin{enumerate}
+      \item \alert<3>{Ενεργοποίηση}
+      \item Προσδοκία/πρόβλεψη
+      \item \alert<3>{Εκμάθηση συνάψεων ενεργών νευρώνων}
+      \end{enumerate}
+    \end{block}
+    \column{0.6\textwidth}
+    \begin{block}{Μεταβλητές κατάστασης}
+      \begin{description}
+        \item[$D_d$] $∈ 𝕊𝕢^{\mathit{Nₙ×Nₛ}}$: πίνακας συναπτικών μονιμοτήτων
+        \item[$\mathit{NS}$] $∈ 𝔹^{\mathit{Nₙ×Nₛ}}$: πίνακας γειτνίασης νευρώνων - δενδριτών
+        \item[$\mathit{SC}$] $∈ 𝔹^{\mathit{Nₛ×Nc}}$: πίνακας γειτνίασης δενδριτών - μικροστηλών
+      \end{description}
+    \end{block}
+  \end{columns}
+  }
+\end{frame}
+
+\begin{frame}[fragile]{Ενεργοποίηση χρονικής μνήμης}
+\begin{block}{Ενεργοποίηση}
+  \begin{equation}
+    α_{ij}= \begin{cases} 1, &j \in c \wedge π_{ij}^{t-1}=1 \text{ (πρόβλεψη)}\\
+                          1, &j \in c \wedge \sum_i π_{ij}^{t-1}=0 \text{ (έξαρση)}\\
+                          0, &\text{ αλλιώς}
+            \end{cases}
+  \end{equation}
+  \begin{description}
+    \item[$c$] ενεργές μικροστήλες
+    \item[$π_{ij}$] προβλεπτικοί νευρώνες, j: μικροστήλη, i: νευρώνας στη j
+  \end{description}
+\end{block}
+\begin{minted}[fontsize=\footnotesize,bgcolor=light-gray,breaklines]{julia}
+burst(c,Π)= c .& .!@percolumn(any,Π, k)
+predicted(c,Π)= @percolumn(&,Π,c, k)
+activate(c,Π)= (predicted(c,Π) .| burst(c,Π)')|> vec
+\end{minted}
+\end{frame}
+
+\begin{frame}{Εκμάθηση}
+\end{frame}
+
+\section{Πείραμα πρόβλεψης χρονοσειράς}
+
+\begin{frame}
+  \centering
+  \includegraphics[width=\textwidth]{../figures/htm_predict_pipeline}
+  \source{\parencite{cuiHTMSpatialPooler2017}}
+  \pause
+  \begin{figure}
+    \includegraphics[width=1.05\textwidth,height=6cm]{../figures/tshotgym}
+    \caption{Ωριαία κατανάλωση ισχύος σε γυμναστήριο}
+  \end{figure}
+\end{frame}
+
+\begin{frame}
+  \centering
+  
 \end{frame}
 
 

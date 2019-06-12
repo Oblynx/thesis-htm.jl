@@ -1,0 +1,134 @@
+\documentclass[11pt,center,lualatex]{beamer}
+
+\input{../preamble.tex}
+\usepackage{fancybox}
+\usepackage{minibox}
+%\usepackage[backend=biber, style=numeric, citestyle=authoryear]{biblatex}
+\usepackage[absolute,overlay]{textpos}
+\usetheme{metropolis}
+
+\newcommand{\mli}[1]{\mathit{#1}}
+
+%---		BIBLIOGRAPHY		---%
+\bibliography{../references.bib}
+%\setbeamertemplate{bibliography item}[text]
+\renewcommand*{\bibfont}{\footnotesize}
+
+\definecolor{light-gray}{gray}{0.86}
+\title{\huge{Υψηλού επιπέδου υλοποίηση των αλγορίθμων Hierarchical Temporal Memory σε Julia}}
+\author{Κωνσταντίνος Σαμαράς-Τσακίρης}
+\date{13 Ιουνίου 2019}
+
+\begin{document}
+
+\begin{frame}%{\maketitle}
+  \titlepage
+\end{frame}
+
+% Intro
+\begin{frame}{Το πρόβλημα}
+  \begin{block}{Επάρκεια}
+	Προσαρμόζεται ένα μοντέλο στα δεδομένα. Αρκεί για να τα περιγράψει ικανοποιητικά; Εξάγει όλη την πληροφορία;
+  \end{block}
+
+  \pause
+  this $φ f \rightarrow d$ Υπόλοιπα \alert{iid}
+
+  \pause
+  Έστω, για γραμμικά μοντέλα, \alert{λευκός θόρυβος}
+\end{frame}
+
+\begin{frame}{Portmanteau}
+  Λευκός θόρυβος $\Rightarrow$ μηδενική αυτοσυσχέτιση $\rho$ ($\tau > 0$)
+
+  \pause
+  Με δεδομένη $r$, έλεγχος:
+  $$ H_0: \rho_\tau = 0 \qquad H_1: \rho_\tau \neq 0$$
+
+  \pause
+  \begin{block}{Ljung \& Box portmanteau statistic}
+	$$ Q = n(n+2) \sum^{K}_{\tau=1} \frac{r_\tau^2}{n-\tau} $$
+
+	$ \sim \mathcal{X}^2 $ με k βαθμούς ελευθερίας
+
+	$\rightarrow$ Απόρριψη $H_0$ αν $ Q > \mathcal{X}^2_{k;1-a} $
+  \end{block}
+
+  \pause
+  \vspace{1em} \centering
+  Αδυναμίες;
+\end{frame}
+
+\begin{frame}{AR vs. MA underfit}
+  \begin{block}{Portmanteau μερικής αυτοσυσχέτισης \tiny{\cite{monti1994}}}
+    Αντικατάσταση στο $Q$ της ολικής με μερική αυτοσυσχέτιση:
+    $$ Q_\phi = n(n+2) \sum^{K}_{\tau=1} \frac{\phi_{\tau\tau}^2}{n-\tau} $$
+  \end{block}
+
+  \pause
+  \begin{itemize}
+    \item Μικρή τάξη AR: \emph{εξίσου ισχυρό} με $Q$
+    \item Μικρή τάξη \alert{MA}: \emph{πιο ευαίσθητο} από $Q$
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Βελτιώσεις $Q$}
+  Ιδέα:
+  \begin{itemize}
+    \item Mικρότερο βάρος στις αργότερες αυτοσυσχετίσεις
+    \item Υπολογίζονται με λιγότερα δείγματα
+  \end{itemize}
+
+  \visible<2>{
+  \begin{block}{Σταθμισμένα στατιστικά Portmanteau \tiny{\only<2>{\cite{fisher2011}}}}
+    $$ Q_w = n(n+2) \sum_{k=1}^m \frac{m-k+1}{m} \frac{\hat{r}_k^2}{n-k} $$
+    $$ M_w = n(n+2) \sum_{k=1}^m \frac{m-k+1}{m} \frac{\hat{\phi}_{\tau\tau}^2}{n-k} $$
+
+    Κατανομή: γραμμικός συνδυασμός $\mathcal{X}^2$
+  \end{block}}
+\end{frame}
+
+\begin{frame}{Βελτιώσεις $Q$}
+  \footcite{monti1994}
+\end{frame}
+
+
+\begin{frame}{Εποχικές χρονοσειρές}
+  \only<1-2>{
+  Περιοδικά υπόλοιπα
+  \pause
+  \begin{itemize}
+    \item Ένδειξη ανεπαρκούς μοντέλου
+    \item Αυτοσυσχέτιση όχι ιδιαίτερα ευαίσθητη στην περιοδικότητα
+  \end{itemize}}
+
+  \pause
+  \only<3>{
+  \begin{block}{Periodogram! \tiny{\cite{sekar2010}}}
+    Παρόμοιο με μετασχηματισμό Fourier:
+    $$ I(f_i) = \frac{2}{n} \left[\left(\sum^n_{t=1} \alpha_t \cos 2\pi f_i t \right)^2 + \left(\sum^n_{t=1} \alpha_t \sin 2\pi f_i t \right)^2 \right] $$
+    όπου $\alpha_t$ τα δείγματα της χρονοσειράς, $f_i = \frac{i}{n}$ συχνότητα
+  \end{block}}
+
+  \pause \pause
+  \begin{block}{Cumulative periodogram}
+    Το κανονικοποιημένο ολοκλήρωμα του periodogram:
+    $$ C(f_j) = \frac {\sum^j_{i=1} I(f_i)} {n \hat{\sigma}_a^2} $$
+  \end{block}
+
+  \pause
+  \begin{description}[Λευκός θόρυβος]
+	\item[Λευκός θόρυβος] $C(f_j)$ ευθεία γραμμή μεταξύ (0,0) και (0.5,1)
+	\item[Περιοδικότητα] Απόκλιση από την ευθεία
+	\begin{itemize}
+	  \item Έλεγχος σημαντικότητας: Kolmogorov-Smirnov 1-sample test
+	\end{itemize}
+  \end{description}
+\end{frame}
+
+\nocite{*}
+\begin{frame}[plain,allowframebreaks]
+  \printbibliography
+\end{frame}
+
+\end{document}
