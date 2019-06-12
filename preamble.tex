@@ -1,3 +1,4 @@
+\usepackage{luatextra}
 \usepackage{fontspec}
 \usepackage{float}
 \usepackage{graphicx}
@@ -15,12 +16,6 @@
 
 %\usepackage{jlcode}
 \usepackage{listings}
-\usepackage{fancyhdr} % headers-footers
-\fancyhf{}
-\lhead{\small\scshape{\leftmark}}
-\rhead{\small\scshape\nouppercase{\rightmark}}
-\cfoot{\small\thepage}
-\pagestyle{fancy}
 
 \usepackage{mathtools}
 % Tables
@@ -31,7 +26,6 @@
 \usepackage{alphabeta}  % greek letters in maths mode
 \usepackage{csquotes}
 \usepackage{xcolor}
-\usepackage{enumitem}
 
 %\renewcommand{\mkbegdispquote}[2]{\itshape}
 
@@ -103,7 +97,8 @@ sorting=ynt
 \renewcommand{\emph}[1]{\textcolor{blue}{\oldemph{#1}}}
 
 \usepackage{unicode-math}
-\setmathfont{Latin Modern Math}
+%\setmathfont{STIX Math}
+\setmathfont{Libertinus Math}
 
 % for having numbers aligned to the decimal point
 % also engineering notation
@@ -118,4 +113,4 @@ sorting=ynt
 \let\emph\textbf
 
 \usepackage{hyperref}	% Hyperlinks
-\usepackage{cleveref}
+%\usepackage{cleveref}

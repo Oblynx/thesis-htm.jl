@@ -31,6 +31,8 @@
   \titlepage
 \end{frame}
 
+\section{Hierarchical Temporal Memory}
+
 \begin{frame}{Νευρώνας}
   \centering
 	\begin{figure}[h]
@@ -66,13 +68,20 @@
 \begin{frame}{Χωρικός συγκεντρωτής}
   \only<1>{
   \centering
-  \includegraphics[width=.9\textwidth]{../figures/vlsi-present/spatpool}
+  \includegraphics[width=.7\textwidth]{../figures/vlsi-present/spatpool}
   \source{\parencite{cuiHTMSpatialPooler2017}}
   }
   \only<2->{
   \begin{columns}
     \column{0.5\textwidth}
     \includegraphics[width=1.15\textwidth]{../figures/vlsi-present/spatpool}
+    \begin{block}{Μεταβλητές κατάστασης}
+      \small
+      \begin{description}
+        \item[$\mathbf{D_p}$] $∈ 𝕊𝕢^{\mathit{Νᵢₙ×Nₛₚ}}$: πίνακας συναπτικών μονιμοτήτων
+        \item[$åₜ$] $∈ 𝔹^{Nₛₚ}$: μεση δραστηριότητα (στο χρόνο) μικροστηλών
+      \end{description}
+    \end{block}
     \source{\parencite{cuiHTMSpatialPooler2017}}
     \column{0.5\textwidth}
     \begin{block}{Βήματα}
@@ -140,7 +149,7 @@ foreach(out_lattice()) do yᵢ
   Dₚ[x, c2lₛₚ[yᵢ...]]= permanences(@> yᵢ xᶜ xᵢ)
 end
 
-@> yᵢ xᶜ xᵢ == xᵢ(xᶜ(yᵢ))
+@> yᵢ xᶜ xᵢ === xᵢ(xᶜ(yᵢ))
 \end{minted}
 \end{onlyenv}
 
@@ -154,7 +163,7 @@ end
 \begin{frame}[fragile]{Επικάλυψη}
 \begin{block}{Επικάλυψη μικροστηλών με συνδεδεμένες εισόδους}
   \begin{align*}
-    \mathbf{W} &= \mathbf{D} \ge θ_c\\
+    \mathbf{W} &= \mathbf{D_p} \ge θ_c\\
     o &= b\,\mathbf{W}\,z
   \end{align*}
   %\setbeamertemplate{description item}[align left]
@@ -189,7 +198,7 @@ jl> f.([1; 10; 100])
 
 \begin{frame}[fragile]{Εκμάθηση συνάψεων}
 \begin{block}{Κανόνας πλαστικότητας}
-  \[ \mathbf{ΔD} = p^+(z◦\mathbf{D}◦c) - p^-(\lnot z◦ \mathbf{D}◦c\]
+  \[ \mathbf{ΔD_p} = p^+(z◦\mathbf{D_p}◦c) - p^-(\lnot z◦ \mathbf{D_p}◦c\]
   \begin{description}
     \item[$c$] ενεργοποίηση χωρικού συγκεντρωτή
   \end{description}
@@ -250,9 +259,9 @@ end
     \column{0.6\textwidth}
     \begin{block}{Μεταβλητές κατάστασης}
       \begin{description}
-        \item[$D_d$] $∈ 𝕊𝕢^{\mathit{Nₙ×Nₛ}}$: πίνακας συναπτικών μονιμοτήτων
-        \item[$\mathit{NS}$] $∈ 𝔹^{\mathit{Nₙ×Nₛ}}$: πίνακας γειτνίασης νευρώνων - δενδριτών
-        \item[$\mathit{SC}$] $∈ 𝔹^{\mathit{Nₛ×Nc}}$: πίνακας γειτνίασης δενδριτών - μικροστηλών
+        \item[$\mathbf{D_d}$] $∈ 𝕊𝕢^{\mathit{Nₙ×Nₛ}}$: πίνακας συναπτικών μονιμοτήτων
+        \item[$\mathbf{NS}$] $∈ 𝔹^{\mathit{Nₙ×Nₛ}}$: πίνακας γειτνίασης νευρώνων - δενδριτών
+        \item[$\mathbf{SC}$] $∈ 𝔹^{\mathit{Nₛ×N_c}}$: πίνακας γειτνίασης δενδριτών - μικροστηλών
       \end{description}
     \end{block}
   \end{columns}
@@ -290,16 +299,23 @@ activate(c,Π)= (predicted(c,Π) .| burst(c,Π)')|> vec
   \source{\parencite{cuiHTMSpatialPooler2017}}
   \pause
   \begin{figure}
-    \includegraphics[width=1.05\textwidth,height=6cm]{../figures/tshotgym}
+    \includegraphics[width=\textwidth,height=6cm]{../figures/tshotgym}
     \caption{Ωριαία κατανάλωση ισχύος σε γυμναστήριο}
   \end{figure}
 \end{frame}
 
-\begin{frame}
+\begin{frame}{Πρόβλεψη 1 στιγμή μπροστά}
   \centering
-  
+  \includegraphics[width=\textwidth]{../figures/tm1.eps}
 \end{frame}
 
+\begin{frame}{Προτάσεις για μελέτη στην HTM}
+  \begin{itemize}
+    \item Χρονική συγκέντρωση. Πόλωση από την προσδοκώμενη ακολουθία \cite{hawkinsTheoryHowColumns2017}
+    \item Συνένωση πολλών περιοχών σε ιεραρχικό μοντέλο \cite{hawkinsFrameworkIntelligenceCortical2019}
+    \item Μελέτη κανόνων εκμάθησης από οπτικη θεωρίας γράφων \cite{kipouridisConvergenceNetworkSystems2019}
+  \end{itemize}
+\end{frame}
 
 \section{Βιβλιογραφία}
 %\nocite{*}
