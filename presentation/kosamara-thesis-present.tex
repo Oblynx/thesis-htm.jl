@@ -112,7 +112,7 @@
       \begin{enumerate}
         \setcounter{enumi}{-1}
         \item \alert<3>{Αντιστοίχιση χώρων εισόδου/εξόδου, αρχικοποίηση εγγύς συνάψεων}
-        \item \alert<3>{Επικάλυψη μικροστηλών με συνδεδεμένες εξόδους}
+        \item \alert<3>{Επικάλυψη μικροστηλών με συνδεδεμένες εισόδους}
         \item Παρώθηση
         \item Τοπική αναστολή
         \item Ενεργοποίηση μικροστηλών που νίκησαν
@@ -188,7 +188,7 @@ end
 \begin{block}{Επικάλυψη μικροστηλών με συνδεδεμένες εισόδους}
   \begin{align*}
     \mathbf{W} &= \mathbf{D_p} \ge θ_c\\
-    o &= b\,\mathbf{W}\,z
+    o &= b\:\mathbf{W}'z
   \end{align*}
   %\setbeamertemplate{description item}[align left]
   \vspace{-2.2\topsep}
@@ -268,10 +268,14 @@ end
   \only<1>{
   \includegraphics[width=\textwidth]{../figures/numenta_temporal_memory1}
 	\source{\parencite{hawkinsWhyNeuronsHave2016}}
+
+		Μνήμη ανώτερης τάξης
   }
   \only<2-3>{
   \includegraphics[width=\textwidth]{../figures/numenta_temporal_memory2}
 	\source{\parencite{hawkinsWhyNeuronsHave2016}}
+		\vspace{-1em}
+		Αναπαράσταση αμφιβολίας
   \pause
   \begin{columns}[T]
     \column{0.4\textwidth}
@@ -288,7 +292,7 @@ end
 		\pause
     \begin{block}{Μεταβλητές κατάστασης}
 			\small
-      \begin{description}
+      \begin{description}[ddddd]
         \item[$\mathbf{D_d}$] $∈ 𝕊𝕢^{\mathit{Nₙ×Nₛ}}$ \alert{αραιός} πίνακας συναπτικών μονιμοτήτων\\
 				[προσυναπτικοί νευρώνες {\large×} μετασυναπτικοί δενδρίτες]
         \item[$\mathbf{NS}$] $∈ 𝔹^{\mathit{Nₙ×Nₛ}}$ πίνακας γειτνίασης νευρώνων - δενδριτών
