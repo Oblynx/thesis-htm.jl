@@ -4,7 +4,7 @@
   \EN{Hierarchical Temporal Memory (HTM)}.
   Βασικοί αλγόριθμοι της θεωρίας διατυπώνονται σε υψηλού επιπέδου γλώσσα με εκφραστική περιεκτικότητα,
   αποσκοπώντας στην καταπολέμηση της βασικής μορφής πολυπλοκότητας που απαντά σε αυτό το μοντέλο:
-  τη \textit{γλωσσική πολυπλοκότητα} \parencite{chazelleNaturalAlgorithmsInfluence}, δηλαδή τη \textit{δυσκολία στην περιγραφή}.
+  τη \textit{γλωσσική πολυπλοκότητα} \parencite{chazelleNaturalAlgorithmsInfluence2012}, δηλαδή τη \textit{δυσκολία στην περιγραφή}.
 
   Με προγραμματιστική διατύπωση πιστή στη μαθηματική διατύπωση των αλγορίθμων, το έργο αυτό φιλοδοξεί να θεμελιώσει και να
   διευκολύνει την περαιτέρω μελέτη ενός συστήματος που βασίζεται σε βιολογικές αρχές,
@@ -133,7 +133,7 @@
 
 \subsection{Φυσικοί αλγόριθμοι}
 
-  Ακολουθώντας τη λογική του Chazelle \cite{chazelleNaturalAlgorithmsInfluence}, η επιτυχία της φυσικής του 20ου αιώνα είναι σε μεγάλο βαθμό η επιτυχία της μαθηματικής έκφρασης.
+  Ακολουθώντας τη λογική του Chazelle \cite{chazelleNaturalAlgorithmsInfluence2012}, η επιτυχία της φυσικής του 20ου αιώνα είναι σε μεγάλο βαθμό η επιτυχία της μαθηματικής έκφρασης.
   Με ένα μικρό σύνολο εξισώσεων μπορούμε να περιγράψουμε τι συμβαίνει στο φυσικό κόσμο.
   Αυτή η διαπίστωση αν μη τι άλλο σκιαγραφεί τις αρχές που διέπουν το φυσικό κόσμο:
   συμμετρία και κανονικότητα, η αμβροσία της συνήθους μαθηματικής διατύπωσης.
@@ -144,12 +144,12 @@
   καθε φαινόμενο είναι ειδικό και ξεχωριστό, αλλοιώσιμο υπό κάθε μετασχηματισμό, εκτός από ορισμένες περιπτώσεις που μπορούν να κατηγοριοποιηθούν μαζί.
   Γιατί οι αρχές επιτρέπουν καταστάσεις διακλάδωσης στα στοιχειώδη συστήματα που περιγράφουν και διάσπαση της συμμετρίας \parencite{bradingSymmetrySymmetryBreaking2017}.
   Έτσι, ο αναγωγισμός δε συνεπάγεται εποικοδομητισμό \parencite{andersonMoreDifferent1972}.
-  Με μια κομψή έκφραση: \textit{η ιστορία είναι ο μεγάλος διασπαστής της συμμετρίας} \parencite{chazelleNaturalAlgorithmsInfluence}.
+  Με μια κομψή έκφραση: \textit{η ιστορία είναι ο μεγάλος διασπαστής της συμμετρίας} \parencite{chazelleNaturalAlgorithmsInfluence2012}.
 
   Δίχως την απλοποιητική επιρροή της συμμετρίας, αυτή η οπτική γωνία έχει να αντιμετωπίσει μια μορφή πολυπλοκότητας διαφορετική
   από αυτήν που συνήθως ορίζουμε στην επιστήμη υπολογιστών: \textit{εκφραστική πολυπλοκότητα}.
   Είναι ωφέλιμο αντιστοίχως να χρησιμοποιήσουμε και διαφορετική γλώσσα για τη μελέτη
-  αυτών των φαινομένων: \textit{τους (φυσικούς) αλγορίθμους} \parencite{chazelleNaturalAlgorithmsInfluence}.
+  αυτών των φαινομένων: \textit{τους (φυσικούς) αλγορίθμους} \parencite{chazelleNaturalAlgorithmsInfluence2012}.
   Παραδείγματα φυσικών αλγορίθμων εξερευνούνται στα \cite{patonComputationCellsTissues2013,adamatzkyAdvancesPhysarumMachines2016}
   \medskip
 
@@ -269,13 +269,13 @@
   \subsubsection{Σύμβολα και τιμές}
 
   Ένα πρόγραμμα Julia είναι κατά κανόνα ένα σύνολο ορισμών τύπων και τιμών. Στους τύπους και στις τιμές μπορεί να αντιστοιχηθούν ονόματα, σύμβολα. Όταν δηλώνεται
-  \begin{lstlisting}[language=julia]
+  \begin{minted}[breaklines]{julia}
   julia> x= 1
   1
-  \end{lstlisting}
+  \end{minted}
   η τιμή 1 αντιστοιχίζεται στο σύμβολο x.
   Έτσι ο τύπος του x είναι ο τύπος της τιμής του:
-  \begin{lstlisting}[language=julia]
+  \begin{minted}[breaklines]{julia}
   julia> x|> typeof
   Int64
 
@@ -284,12 +284,12 @@
 
   julia> x|> typeof
   Float64
-  \end{lstlisting}
+  \end{minted}
   Σε όλην αυτήν την παρουσίαση δε χρησιμοποιήθηκε ο όρος «μεταβλητή». Το x είναι απλώς ένα σύμβολο, που εδώ αντιστοιχίστηκε σε μια σταθερή, αμετάβλητη τιμή,
   και μετά \textit{επαναντιστοιχίστηκε} σε μια διαφορετική σταθερή, αμετάβλητη τιμή.
 
   Το x θα μπορούσε να αντιστοιχιστεί και σε μια όντως μεταβλητή τιμή, δηλαδή μία τιμή που επιτρέπεται να τροποποηθεί:
-  \begin{lstlisting}[language=julia]
+  \begin{minted}[breaklines]{julia}
   julia> x= rand(Int8,5)
   5-element Array{Int8,1}:
    31
@@ -308,18 +308,18 @@
    86
    -3
     0
-  \end{lstlisting}
+  \end{minted}
 
   Εξίσου, η τιμή που συμβολίζει το x μπορεί να είναι ένας τύπος
-  \begin{lstlisting}[language=julia]
+  \begin{minted}[breaklines]{julia}
   julia> x= Int64
   Int64
 
   julia> x|> typeof
   DataType
-  \end{lstlisting}
+  \end{minted}
   ή μια συνάρτηση
-  \begin{lstlisting}[language=julia]
+  \begin{minted}[breaklines]{julia}
   julia> x= (i)-> i+1
   #3 (generic function with 1 method)
 
@@ -328,7 +328,7 @@
 
   julia> x(5)
   6
-  \end{lstlisting}
+  \end{minted}
 
   \subsubsection{Συναρτήσεις και μέθοδοι}
 
@@ -338,16 +338,16 @@
   \textbf{«πολλαπλή αποστολή»} (multiple dispatch) μεθόδων συνάρτησης βάσει τύπων.
   Οι όροι «μέθοδος» και «συνάρτηση» σημαίνουν διαφορετικά πράγματα στη Julia. Παραπάνω ορίσαμε μία ανώνυμη συνάρτηση που υλοποιείται από μία μέθοδο.
   Θα μπορούσαμε όμως να ορίσουμε και συνάρτηση που να μην υλοποιείται από καμία μέθοδο:
-  \begin{lstlisting}[language=julia]
+  \begin{minted}[breaklines]{julia}
   julia> function myfun end
   myfun (generic function with 0 methods)
 
   julia> myfun()
   ERROR: MethodError: no method matching myfun()
-  \end{lstlisting}
+  \end{minted}
 
   Ας προσθέσουμε 2 μεθόδους στη συνάρτηση, για να φανεί η «πολλαπλή αποστολή» κι η χρήση τύπων:
-  \begin{lstlisting}[language=julia]
+  \begin{minted}[breaklines]{julia}
   julia> myfun(i::Int)= print("I'm an Int")
   myfun (generic function with 1 method)
 
@@ -365,7 +365,7 @@
 
   julia> myfun()
   ERROR: MethodError: no method matching myfun()
-  \end{lstlisting}
+  \end{minted}
 
   Μέθοδος λοιπόν είναι ο συνδυασμός μίας συνάρτησης και μιας πλειάδας (tuple) ορισμάτων.
   Αυτή η σχεδίαση επιτρέπει έναν πολυμορφισμό συγκρίσιμο με της C++.
@@ -375,7 +375,7 @@
   Είναι συχνό να θέλουμε να εκφράσουμε τιμές που συντίθενται από απλούστερες τιμές.
   Όπως το «struct» σε άλλες γλώσσες, έτσι και στη Julia μπορούμε να δημιουργήσουμε σύνθετους τύπους για να περιγράψουμε τέτοιες τιμές με τη λέξη-κλειδί struct:
 
-  \begin{lstlisting}[language=julia]
+  \begin{minted}[breaklines]{julia}
   julia> struct Point
     x::Int
     y::Int
@@ -386,7 +386,7 @@
 
   julia> Point(2,3).x
   2
-  \end{lstlisting}
+  \end{minted}
 
   Για κάθε ονοματισμένο τύπο αυτόματα δηλώνεται και μία συνάρτηση με το ίδιο όνομα και μία μέθοδο,
   που παίρνει τόσα ορίσματα όσα τα στοιχεία του τύπου και αντιστοιχίζει με τη σειρά τις τιμές τους στην τιμή του σύνθετου τύπου που δημιουργεί.
@@ -394,14 +394,14 @@
   Ο ορισμός του τύπου \verb|Point| παραπάνω όμως μας περιορίζει στις 2 διαστάσεις.
   Πώς θα ορίζαμε έναν τύπο Point Ν διαστάσεων; Με παράμετρο τύπου:
 
-  \begin{lstlisting}[language=julia]
+  \begin{minted}[breaklines]{julia}
   julia> struct Point{N}
     coords::NTuple{N,Int}
   end
 
   julia> Point((3,4,5))
   Point{3}((3, 4, 5))
-  \end{lstlisting}
+  \end{minted}
 
   Οι παράμετροι τύπου ορίζουν μία παραπάνω τιμή που είναι διαθέσιμη για χρήση στο πλαίσιο ορισμού της (ορισμός συνάρτησης ή τύπου).
   \footnote{Προς αποφυγήν σύγχυσης, οι «παράμετροι τύπου» δε χρησιμοποιούνται μόνο
@@ -420,7 +420,7 @@
   Κάποιοι επιτρέπονται στα σύμβολα οποιασδήποτε τιμής (χαρακτηριστικά, όσους δείκτες ή εκθέτες προσδιορίζονται στη Unicode, που, δυστυχώς, δεν είναι το σύνολο)
   και κάποιοι άλλοι ορίζουν υποχρεωτικά τελεστές:
 
-  \begin{lstlisting}
+  \begin{minted}[breaklines]{julia}
   julia> xᶜ= 5
   5
 
@@ -432,7 +432,7 @@
 
   julia> xᶜ ⊖ 3
   2
-  \end{lstlisting}
+  \end{minted}
 
   Η δυνατότητα αυτή θα διευκολύνει τη διατύπωση μαθηματικών ορισμών.
 

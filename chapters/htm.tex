@@ -105,7 +105,7 @@
 	\subsubsection{Νευρώνες}
 
 	Στον ανθρώπινο εγκέφαλο υπάρχουν πολλά είδη νευρώνων, που διαφέρουν στη μορφολογία, στις ηλεκτρικές και χημικές τους ιδιότητες \parencite{markramReconstructionSimulationNeocortical2015}.
-	Η μόνη κατηγορία νευρώνα στην οποία βασίζεται το νευρικό μοντέλο της HTM είναι οι πυραμιδικοί νευρώνες \ref{fig:pyramidal_neuron}
+	Η μόνη κατηγορία νευρώνα στην οποία βασίζεται το νευρικό μοντέλο της HTM είναι οι πυραμιδικοί νευρώνες (\ref{fig:pyramidal_neuron})
 	(το αποτέλεσμα της συμπεριφοράς άλλων νευρώνων συμπεριλαμβάνεται έμμεσα στη λογική των αλγορίθμων).
 	Ο πυραμιδικός νευρώνας είναι ένα σύνθετο στοιχείο, με πολλούς χώρους και διανεμημένες λειτουργίες, που υλοποιούν τις λογικές πράξεις της άθροισης,
 	του πολλαπλασιασμού, της χωρικής και χρονικής ολοκλήρωσης ταυτόχρονα και παράλληλα σε διαφορετικές ομάδες εισόδων.
@@ -257,7 +257,7 @@
 	Θεωρήσαμε ότι το δεύτερο SDR είναι αποτέλεσμα θορύβου στο πρώτο κι επομένως ήταν θεμιτό ο δενδρίτης να τα ταυτίσει.
 	Πόση όμως είναι η πιθανότητα να ενεργοποιηθεί ο ίδιος δενδρίτης από ένα διαφορετικό, τυχαίο SDR με πληθάριθμο $\hat{w}$ που δεν προκύπτει από το αρχικό;
 	Σε αυτήν την περίπτωση η ενεργοποίηση θα ταύτιζε ψευδώς το τυχαίο SDR με το πρώτο.
-  Η πιθανότητα ψευδούς ταύτισης είναι \footnote{υπολογίστηκε με τον κώδικα του παραρτήματος \ref{app:sdr_fp}}:
+  Η πιθανότητα ψευδούς ταύτισης είναι:
 	\begin{equation}
 		p_{\mathit{fp}}= \frac{ \norm{\mathit{overlap\_set(θ)}} }{ \mathit{χωρητικότητα(N,w)} }
 		=	\frac{ \sum_{b=θ}^{\hat{w}} \binom{\hat{w}}{b} \binom{N-\hat{w}}{\hat{w}-b} }{ \binom N w }
@@ -386,10 +386,9 @@
 
 	\begin{figure}[t]
 		\centering
-		\hfill
-		\begin{subfigure}[t]{0.4\textwidth}
+		\begin{subfigure}[t]{0.48\textwidth}
 			\centering
-			\includegraphics[width=\textwidth]{figures/spatial_hardware}
+			\includegraphics[width=.9\textwidth]{figures/spatial_hardware}
 			%\captionsetup{singlelinecheck=off}
 			\caption[κυκλωματική υλοποίηση χωρικού συγκεντρωτή]{Υλοποίηση χρονικού συγκεντρωτή με βάση το χρονισμό.
 			Κάθε κύτταρο C αντιπροσωπεύει μία μικροστήλη. Δέχεται προσθιοδρομικά ερεθίσματα από τη ροή \circled{1}.
@@ -400,9 +399,9 @@
 			\label{fig:SP_circ}
 		\end{subfigure}
 		\hfill
-		\begin{subfigure}[t]{0.35\textwidth}
+		\begin{subfigure}[t]{0.49\textwidth}
 			\centering
-			\includegraphics[width=\textwidth]{figures/temporal_hardware}
+			\includegraphics[width=.7\textwidth]{figures/temporal_hardware}
 			%\captionsetup{singlelinecheck=off}
 			\caption[κυκλωματική υλοποίηση μικροστήλης]{Υλοποίηση μιας μικροστήλης.
 			Τα 3 στοιχεία D,I,S (δενδρίτης, αναστολέας, σώμα) μαζί περιγράφουν 1 νευρώνα.
@@ -415,7 +414,6 @@
 			}
 			\label{fig:minicolumn_circ}
 		\end{subfigure}
-		\hfill
 		\caption[κυκλωματικές υλοποιήσεις μικροστηλών στο HICANN]{Κυκλωματικές υλοποιήσεις μικροστηλών στο HICANN \parencite{meierMixedsignalUniversalNeuromorphic2015}.
 		Προσφέρουν εποπτεία της οργάνωσης των μικροκυκλωμάτων μέσω του μηχανισμού της \textit{αναστολής}.
 		Σε σχέση με τη θεωρία HTM εφαρμόζουν κάποιες απλοποιήσεις, όπως μόνο 1 δενδρίτη ανά κύτταρο.
