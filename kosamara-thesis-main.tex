@@ -11,17 +11,20 @@
 \addbibresource{extra_refs/primary.bib}
 \addbibresource{extra_refs/secondary.bib}
 
+\usepackage{enumitem}
+\usepackage{fancyhdr} % headers-footers
+\fancyhf{}
+\lhead{\small\scshape{\leftmark}}
+\rhead{\small\scshape\nouppercase{\rightmark}}
+\cfoot{\small\thepage}
+\pagestyle{fancy}
+
 % Sloppy fix for protruding lines. Need to enable hyphenation!
 % https://tex.stackexchange.com/questions/20585/fixing-an-overfull-box
 \emergencystretch=0.7em
 
 \newcommand{\titlestring}{Υψηλού επιπέδου υλοποίηση των αλγορίθμων Hierarchical Temporal Memory σε Julia}
 \newcommand{\authorstring}{Κωνσταντίνος Σαμαράς-Τσακίρης}
-\title{%
-\titlestring \\
-{\large Αριστοτέλειο Πανεπιστήμιο Θεσσαλονίκης}\\
-{\large Σχολή Ηλεκτρολόγων Μηχανικών και Μηχανικών Υπολογιστών}
-}
 
 \hypersetup{%
     pdfencoding=auto,
@@ -29,15 +32,19 @@
     pdftitle={\titlestring}
     }
 
-\author{\authorstring\\ \bigskip
-Επιβλέπων καθηγητής: Νίκος Πιτσιάνης}
-\date{2019-06-10}
+\title{\titlestring}
+\author{\authorstring}
+\date{13 Ιουνίου 2019}
 
 
 \begin{document}
 
-\maketitle
+\input{chapters/title.tex}
 \input{chapters/abstract.tex}
+\clearpage
+\newpage
+\thispagestyle{empty}
+\mbox{}
 
 \pagenumbering{roman}
 \tableofcontents{}
@@ -59,10 +66,5 @@
 \input{chapters/conclusions.tex}
 
 \printbibliography
-
-%\begin{appendices}
-%\chapter{Τμήματα κώδικα}
-%\input{chapters/app_codesnip.tex}
-%\end{appendices}
 
 \end{document}

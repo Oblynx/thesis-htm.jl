@@ -3,17 +3,17 @@
 \select@language {greek}
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {2.1}{\ignorespaces hidden markov model}}{13}{figure.caption.11}
-\contentsline {figure}{\numberline {2.2}{\ignorespaces πυραμιδικός νευρώνας και μοντέλο νευρώνα στην HTM\relax }}{15}{figure.caption.13}
-\contentsline {figure}{\numberline {2.3}{\ignorespaces μονιμότητα σύναψης}}{16}{figure.caption.15}
-\contentsline {figure}{\numberline {2.4}{\ignorespaces αποδόμηση φλοιικού επιπέδου και μικροστήλες}}{19}{figure.caption.20}
-\contentsline {figure}{\numberline {2.5}{\ignorespaces επίπεδα σε φλοιική στήλη}}{20}{figure.caption.22}
-\contentsline {figure}{\numberline {2.6}{\ignorespaces κυκλωματικές υλοποιήσεις μικροστηλών στο HICANN}}{21}{figure.caption.24}
-\contentsline {figure}{\numberline {2.7}{\ignorespaces χωρικός συγκεντρωτής}}{23}{figure.caption.25}
-\contentsline {figure}{\numberline {2.8}{\ignorespaces μνήμη ακολουθιών}}{25}{figure.caption.26}
-\contentsline {figure}{\numberline {2.9}{\ignorespaces πρόβλεψη επόμενου στοιχείου ακολουθίας}}{25}{figure.caption.27}
+\contentsline {figure}{\numberline {2.1}{\ignorespaces hidden markov model}}{13}{figure.caption.9}
+\contentsline {figure}{\numberline {2.2}{\ignorespaces πυραμιδικός νευρώνας και μοντέλο νευρώνα στην HTM \parencite [πηγές][]{wiki_pyramidalcell,hawkinsWhyNeuronsHave2016}\relax }}{15}{figure.caption.11}
+\contentsline {figure}{\numberline {2.3}{\ignorespaces μονιμότητα σύναψης}}{16}{figure.caption.13}
+\contentsline {figure}{\numberline {2.4}{\ignorespaces αποδόμηση φλοιικού επιπέδου και μικροστήλες}}{19}{figure.caption.18}
+\contentsline {figure}{\numberline {2.5}{\ignorespaces επίπεδα σε φλοιική στήλη}}{20}{figure.caption.20}
+\contentsline {figure}{\numberline {2.6}{\ignorespaces κυκλωματικές υλοποιήσεις μικροστηλών στο HICANN}}{21}{figure.caption.22}
+\contentsline {figure}{\numberline {2.7}{\ignorespaces χωρικός συγκεντρωτής}}{23}{figure.caption.23}
+\contentsline {figure}{\numberline {2.8}{\ignorespaces μνήμη ακολουθιών}}{25}{figure.caption.24}
+\contentsline {figure}{\numberline {2.9}{\ignorespaces πρόβλεψη επόμενου στοιχείου ακολουθίας}}{25}{figure.caption.25}
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {4.1}{\ignorespaces χρονοσειρά κατανάλωσης ισχύος για πείραμα πρόβλεψης}}{64}{figure.caption.48}
-\contentsline {figure}{\numberline {4.2}{\ignorespaces μελέτη πρόβλεψης χρονοσειράς με τη χρονική μνήμη}}{67}{figure.caption.50}
-\contentsline {figure}{\numberline {4.3}{\ignorespaces μελέτη διατήρησης ομοιότητας του χώρου εισόδου από το χωρικό συγκεντρωτή}}{69}{figure.caption.52}
+\contentsline {figure}{\numberline {4.1}{\ignorespaces χρονοσειρά κατανάλωσης ισχύος για πείραμα πρόβλεψης}}{63}{figure.caption.46}
+\contentsline {figure}{\numberline {4.2}{\ignorespaces μελέτη πρόβλεψης χρονοσειράς με τη χρονική μνήμη}}{66}{figure.caption.48}
+\contentsline {figure}{\numberline {4.3}{\ignorespaces μελέτη διατήρησης ομοιότητας του χώρου εισόδου από το χωρικό συγκεντρωτή}}{68}{figure.caption.50}
