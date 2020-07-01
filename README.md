@@ -1,6 +1,11 @@
 # thesis-htm.jl
 
-This repo contains the HTM.jl thesis report in LaTeX.
+This repo contains the [HierarchicalTemporalMemory.jl](https://github.com/oblynx/HierarchicalTemporalMemory.jl) thesis report in Greek.
+
+The main outcome of the thesis is the creation of HierarchicalTemporalMemory.jl and parts of the thesis are translated into the package docs.
+
+## Repo structure
+
 The main .tex document that builds the thesis is `kosamara-thesis-main.tex`.
 It includes the preamble and each chapter separately.
 Most chapters are individual .tex files in the [chapters](chapters/) dir.
